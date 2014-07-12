@@ -25,7 +25,7 @@ class Parser
         char* filename_;
         std::fstream file_;
         Map *map_;
-        Colors window_;
+        //Colors window_;
 };
 
 #endif /* !PARSER_HH */

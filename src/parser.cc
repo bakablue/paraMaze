@@ -79,6 +79,7 @@ void Parser::init_gui(int argc, char* argv[])
 {
     QApplication app(argc, argv);
 
+    Colors window_;
     window_.set_map(map_);
     window_.resize(250, 150);
     window_.setWindowTitle("yolo");

@@ -47,9 +47,9 @@ int Map::get_height() const
 void Map::set_cell(int x, int y, char type)
 {
     Cell *c = new Cell();
-    if (type == 'W')
+    if (type == 'w')
         c->set_type(WALL);
-    else
+    else if (type == 'p')
         c->set_type(FREE);
 
     map_->insert(std::pair<int, Cell*> (y * x + x, c));
