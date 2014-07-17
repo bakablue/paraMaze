@@ -140,16 +140,19 @@ void Map::standard_solve_perfect_maze()
                     wtemp = w + adjacents[i][0];
                     htemp = h + adjacents[i][1];
 
-                    if (map_->find(width_ * htemp + wtemp) != map_->end())
+                    if (wtemp >= 0 && wtemp < width_ && htemp >= 0 && htemp < height_)
                     {
-                        ctemp = map_->find(width_ * htemp + wtemp)->second;
+                        if (map_->find(width_ * htemp + wtemp) != map_->end())
+                        {
+                            ctemp = map_->find(width_ * htemp + wtemp)->second;
 
-                        if (ctemp->get_type() == FREE
-                            || ctemp->get_type() == START
-                            || ctemp->get_type() == END)
-                            count++;
+                            if (ctemp->get_type() == FREE
+                                || ctemp->get_type() == START
+                                || ctemp->get_type() == END)
+                                count++;
+                        }
+
                     }
-
                 }
                 if (count == 1)
                     init_cells.push_back(c);
@@ -189,21 +192,26 @@ void Map::algo_flow(Cell* current, Cell* cpointed)
             wtemp = current->get_x() + adjacents[i][0];
             htemp = current->get_y() + adjacents[i][1];
 
-            if (map_->find(width_ * htemp + wtemp) != map_->end())
+            if (wtemp >= 0 && wtemp < width_ && htemp >= 0 && htemp < height_)
             {
-                ctemp = map_->find(width_ * htemp + wtemp)->second;
-                if (ctemp->get_type() == FREE || ctemp->get_type() == END)
-                    next_cells.push_back(ctemp);
+                if (map_->find(width_ * htemp + wtemp) != map_->end())
+                {
+                    ctemp = map_->find(width_ * htemp + wtemp)->second;
+                    if (ctemp->get_type() == FREE || ctemp->get_type() == END)
+                        next_cells.push_back(ctemp);
 
+                }
             }
         }
 
+        // Launch the algorithm on every free cell beside the current one
         for (auto c : next_cells)
             algo_flow(c, current);
     }
     if (current->get_type() == END && cpointed->get_type() == FLOW)
     {
         current->set_type(PATH);
+        // Begin printing the path of the maze
         algo_solve_path(cpointed);
     }
 }
@@ -214,6 +222,7 @@ void Map::standard_solve_any_maze()
     int wtemp, htemp = 0;
     std::vector<Cell*> init_cells;
 
+    // We start from the start case
     Cell* cstart = map_->find(jstart_ * width_ + istart_)->second;
     Cell* ctemp;
 
@@ -222,12 +231,15 @@ void Map::standard_solve_any_maze()
         wtemp = istart_ + adjacents[i][0];
         htemp = jstart_ + adjacents[i][1];
 
-        if (map_->find(width_ * htemp + wtemp) != map_->end())
+        if (wtemp >= 0 && wtemp < width_ && htemp >= 0 && htemp < height_)
         {
-            ctemp = map_->find(width_ * htemp + wtemp)->second;
-            if (ctemp->get_type() == FREE)
-                init_cells.push_back(ctemp);
+            if (map_->find(width_ * htemp + wtemp) != map_->end())
+            {
+                ctemp = map_->find(width_ * htemp + wtemp)->second;
+                if (ctemp->get_type() == FREE)
+                    init_cells.push_back(ctemp);
 
+            }
         }
     }
 
