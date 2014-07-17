@@ -1,12 +1,14 @@
 #include "cell.hh"
 
 Cell::Cell()
-    : x_(0), y_(0)
+    : x_(0)
+    , y_(0)
 {
 }
 
 Cell::Cell(int x, int y)
-    : x_(x), y_(y)
+    : x_(x)
+    , y_(y)
 {
 }
 
@@ -15,6 +17,7 @@ Cell::Cell(const Cell* c)
     type_ = c->get_type();
     x_ = c->get_x();
     y_ = c->get_y();
+    pointed_ = c->get_pointed();
 }
 
 //Cell* Cell::operator=(const Cell* c)
@@ -43,4 +46,14 @@ int Cell::get_x() const
 int Cell::get_y() const
 {
     return y_;
+}
+
+Cell* Cell::get_pointed() const
+{
+    return pointed_;
+}
+
+void Cell::set_pointed(Cell* p)
+{
+    pointed_ = p;
 }

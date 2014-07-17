@@ -10,7 +10,8 @@ typedef enum type_cell
     WALL,
     START,
     END,
-    PATH
+    PATH,
+    FLOW
 } e_type_cell;
 
 class Cell
@@ -35,16 +36,22 @@ class Cell
                 os << "S";
             else if (obj.get_type() == END)
                 os << "E";
+            else if (obj.get_type() == FLOW)
+                os << "^";
 
             return os;
         }
 
         int get_x() const;
         int get_y() const;
+
+        Cell* get_pointed() const;
+        void set_pointed(Cell* p);
     private:
         int x_;
         int y_;
         e_type_cell type_;
+        Cell* pointed_;
 };
 
 

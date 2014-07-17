@@ -38,11 +38,13 @@ void Colors::paintEvent(QPaintEvent *e)
             else if (t == FREE)
                 painter.setBrush(QBrush("#1ac500"));
             else if (t == PATH)
-                painter.setBrush(QBrush("#009EFF"));
+                painter.setBrush(QBrush("#005AA4"));
             else if (t == END)
                 painter.setBrush(QBrush("#FF0000"));
             else if (t == START)
                 painter.setBrush(QBrush("#FF0000"));
+            else if (t == FLOW)
+                painter.setBrush(QBrush("#00A27A"));
 
             painter.drawRect(i * width, j * height, width, height);
         }

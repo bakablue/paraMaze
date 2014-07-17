@@ -3,6 +3,10 @@
 std::vector<std::vector<int> > Map::adjacents;
 
 Map::Map()
+    : width_(0)
+    , height_(0)
+    , istart_(0)
+    , jstart_(0)
 {
     adjacents.push_back({ 1, 0 });
     adjacents.push_back({ -1, 0 });
@@ -14,6 +18,8 @@ Map::Map()
 Map::Map(int width, int height)
     : width_(width)
     , height_(height)
+    , istart_(0)
+    , jstart_(0)
 {
     map_ = new std::map<int, Cell*>();
 }
@@ -83,8 +89,8 @@ void Map::standard_solve_perfect_maze_rec(int w, int h)
     int htemp, wtemp = 0;
     int i = 0;
     std::vector<Cell*> next_cell;
-    //Cell* temp;
 
+    // Checks for free cells and add them to the list next_cell
     for (i = 0; i < 4; ++i)
     {
         wtemp = w + adjacents[i][0];
@@ -100,6 +106,8 @@ void Map::standard_solve_perfect_maze_rec(int w, int h)
 
     }
 
+    // The cell has 3 walls so we can eliminate it and check the only free cell
+    // beside it
     if (next_cell.size() == 1)
     {
         map_->find(width_ * h + w)->second->set_type(WALL);
@@ -116,8 +124,7 @@ void Map::standard_solve_perfect_maze()
     int htemp, wtemp = 0;
     int count = 0;
     std::vector<Cell*> init_cells;
-    Cell *c;
-    Cell *ctemp;
+    Cell *c, *ctemp;
 
     for (h = 0; h < height_; ++h)
     {
@@ -158,23 +165,84 @@ void Map::standard_solve_perfect_maze()
     }
 }
 
+void Map::algo_solve_path(Cell* current)
+{
+    if (current->get_type() != START)
+        algo_solve_path(current->get_pointed());
+    current->set_type(PATH);
+}
+
+void Map::algo_flow(Cell* current, Cell* cpointed)
+{
+    int i = 0;
+    int wtemp, htemp = 0;
+    std::vector<Cell*> next_cells;
+    Cell* ctemp;
+
+    if (current->get_type() == FREE)
+    {
+        current->set_pointed(cpointed);
+        current->set_type(FLOW);
+
+        for (i = 0; i < 4; ++i)
+        {
+            wtemp = current->get_x() + adjacents[i][0];
+            htemp = current->get_y() + adjacents[i][1];
+
+            if (map_->find(width_ * htemp + wtemp) != map_->end())
+            {
+                ctemp = map_->find(width_ * htemp + wtemp)->second;
+                if (ctemp->get_type() == FREE || ctemp->get_type() == END)
+                    next_cells.push_back(ctemp);
+
+            }
+        }
+
+        for (auto c : next_cells)
+            algo_flow(c, current);
+    }
+    if (current->get_type() == END && cpointed->get_type() == FLOW)
+    {
+        current->set_type(PATH);
+        algo_solve_path(cpointed);
+    }
+}
+
 void Map::standard_solve_any_maze()
 {
-    int h, w = 0;
+    int i = 0;
+    int wtemp, htemp = 0;
+    std::vector<Cell*> init_cells;
 
-    for (h = 0; h < height_; h++)
+    Cell* cstart = map_->find(jstart_ * width_ + istart_)->second;
+    Cell* ctemp;
+
+    for (i = 0; i < 4; ++i)
     {
-        for (w = 0; w < width_; w++)
+        wtemp = istart_ + adjacents[i][0];
+        htemp = jstart_ + adjacents[i][1];
+
+        if (map_->find(width_ * htemp + wtemp) != map_->end())
         {
-            //if (map_->find(w * h + w) != WALL && map_->find(w * h + w) != PATH)
-            //{
-            //}
+            ctemp = map_->find(width_ * htemp + wtemp)->second;
+            if (ctemp->get_type() == FREE)
+                init_cells.push_back(ctemp);
+
         }
     }
+
+    for (auto c : init_cells)
+        algo_flow(c, cstart);
 }
 
 Map* Map::operator=(Map *map)
 {
     // Good copy ?
     return map;
+}
+
+void Map::set_start_cell(int istart, int jstart)
+{
+    istart_ = istart;
+    jstart_ = jstart;
 }
