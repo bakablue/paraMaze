@@ -24,6 +24,7 @@ class Map
         int get_height() const;
 
         void standard_solve_perfect_maze();
+        void standard_solve_perfect_maze_rec(int w, int h);
         void standard_solve_any_maze();
 
         Map* operator=(Map *map);

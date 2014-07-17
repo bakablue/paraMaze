@@ -32,11 +32,17 @@ void Colors::paintEvent(QPaintEvent *e)
     {
         for (j = 0; j < map_->get_height(); j++)
         {
-            t = map_->get_map()->find(i * j + i)->second->get_type();
+            t = map_->get_map()->find(j * map_->get_width() + i)->second->get_type();
             if (t == WALL)
                 painter.setBrush(QBrush("#c56c00"));
             else if (t == FREE)
                 painter.setBrush(QBrush("#1ac500"));
+            else if (t == PATH)
+                painter.setBrush(QBrush("#009EFF"));
+            else if (t == END)
+                painter.setBrush(QBrush("#FF0000"));
+            else if (t == START)
+                painter.setBrush(QBrush("#FF0000"));
 
             painter.drawRect(i * width, j * height, width, height);
         }

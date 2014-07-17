@@ -63,8 +63,9 @@ int Parser::parse(int argc, char* argv[])
                 map_->set_cell(i, j, line[i]);
             j++;
         }
-        init_gui(argc, argv);
         map_->display();
+        map_->standard_solve_perfect_maze();
+        init_gui(argc, argv);
         file_.close();
 
         return 0;

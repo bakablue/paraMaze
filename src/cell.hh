@@ -18,6 +18,7 @@ class Cell
     public:
         Cell();
         Cell(int x, int y);
+        Cell(const Cell* c);
 
         void set_type(e_type_cell type);
         e_type_cell get_type() const;
@@ -26,10 +27,20 @@ class Cell
         {
             if (obj.get_type() == WALL)
                 os << "W";
-            else
+            else if (obj.get_type() == PATH)
                 os << "P";
+            else if (obj.get_type() == FREE)
+                os << "F";
+            else if (obj.get_type() == START)
+                os << "S";
+            else if (obj.get_type() == END)
+                os << "E";
+
             return os;
         }
+
+        int get_x() const;
+        int get_y() const;
     private:
         int x_;
         int y_;

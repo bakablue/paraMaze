@@ -10,6 +10,21 @@ Cell::Cell(int x, int y)
 {
 }
 
+Cell::Cell(const Cell* c)
+{
+    type_ = c->get_type();
+    x_ = c->get_x();
+    y_ = c->get_y();
+}
+
+//Cell* Cell::operator=(const Cell* c)
+//{
+//    type_ = c->get_type();
+//    x_ = c->get_x();
+//    y_ = c->get_y();
+//    return this;
+//}
+
 void Cell::set_type(e_type_cell type)
 {
     type_ = type;
@@ -20,3 +35,12 @@ e_type_cell Cell::get_type() const
     return type_;
 }
 
+int Cell::get_x() const
+{
+    return x_;
+}
+
+int Cell::get_y() const
+{
+    return y_;
+}
