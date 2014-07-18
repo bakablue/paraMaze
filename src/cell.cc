@@ -20,3 +20,22 @@ e_type_cell Cell::get_type() const
     return type_;
 }
 
+int Cell::get_x() const
+{
+	return x_;
+}
+
+int Cell::get_y() const
+{
+	return y_;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Cell& obj)
+{
+    if (obj.get_type() == WALL)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", W)";
+    else
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", P)";
+    return os;
+}

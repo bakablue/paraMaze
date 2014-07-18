@@ -21,15 +21,11 @@ class Cell
 
         void set_type(e_type_cell type);
         e_type_cell get_type() const;
+        int get_x() const;
+        int get_y() const;
 
-        friend std::ostream& operator<<(std::ostream& os, const Cell& obj)
-        {
-            if (obj.get_type() == WALL)
-                os << "W";
-            else
-                os << "P";
-            return os;
-        }
+        friend std::ostream& operator<<(std::ostream& os, const Cell& obj);
+
     private:
         int x_;
         int y_;
