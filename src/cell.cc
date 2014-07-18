@@ -9,7 +9,9 @@ Cell::Cell()
 Cell::Cell(int x, int y)
     : x_(x)
     , y_(y)
+    , isInMaze_(false)
 {
+
 }
 
 Cell::Cell(const Cell* c)
@@ -49,23 +51,42 @@ int Cell::get_y() const
 }
 
 
+// std::ostream& operator<<(std::ostream& os, const Cell& obj)
+// {
+//     if (obj.get_type() == WALL)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", W)";
+//    	else if (obj.get_type() == PATH)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", P)";
+//     else if (obj.get_type() == FREE)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", F)";
+//     else if (obj.get_type() == START)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", S)";
+//     else if (obj.get_type() == END)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", E)";
+//     else if (obj.get_type() == FLOW)
+//         os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", ^)";
+
+//     return os;
+// }
+
 std::ostream& operator<<(std::ostream& os, const Cell& obj)
 {
     if (obj.get_type() == WALL)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", W)";
+        os << "W";
    	else if (obj.get_type() == PATH)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", P)";
+        os << "P";
     else if (obj.get_type() == FREE)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", F)";
+        os << "F";
     else if (obj.get_type() == START)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", S)";
+        os << "S";
     else if (obj.get_type() == END)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", E)";
+        os << "E";
     else if (obj.get_type() == FLOW)
-        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", ^)";
+        os << "^";
 
     return os;
 }
+
 
 Cell* Cell::get_pointed() const
 {

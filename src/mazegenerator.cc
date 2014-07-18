@@ -1,112 +1,145 @@
 #include "mazegenerator.hh"
 
-MazeGenerator::MazeGenerator(int h, int w)
-	: h_(h), w_(w)
+
+MazeGenerator::MazeGenerator(int h, int w, Colors* win)
+	: h_(h)
+	, w_(w)
+	, window_(win)
 {
-	maze_ = std::vector<std::vector<char> >(h) ;
+	maze_ = std::vector<std::vector<Cell*> >(h);
 	for (int i = 0; i < h; ++i)
 	{
-		maze_[i] = std::vector<char>(w, 'w');
+		maze_[i] = std::vector<Cell*>(w);
 	}
-	maze_[0][w - 1] = "e";
-	maze_[h - 1][w - 1] = "s";
+	
+	for (int i = 0; i < h; ++i)
+	{
+		for (int j = 0; j < w; ++j)
+		{
+			Cell* c = new Cell(j, i);
+			c->set_type(WALL);
+			maze_[i][j] = c;
+		}
+	}
+	maze_[h - 1][0]->set_type(START);
+
+    window_->set_maze(maze_);
+    window_->set_isMaze(true);
+    window_->resize(250, 150);
+    window_->setWindowTitle("yolo");
+    window_->show();
 }
 
 
-
-    // Start with a grid full of walls.
-    // Pick a cell, mark it as part of the maze. Add the walls of the cell to the wall list.
-    // While there are walls in the list:
-    //     Pick a random wall from the list. If the cell on the opposite side isn't in the maze yet:
-    //         Make the wall a passage and mark the cell on the opposite side as part of the maze.
-    //         Add the neighboring walls of the cell to the wall list.
-    //     If the cell on the opposite side already was in the maze, remove the wall from the list.
-
+MazeGenerator::~MazeGenerator()
+{
+	for (int i = 0; i < h_; ++i)
+	{
+		for (int j = 0; j < w_; ++j)
+		{
+			free(maze_[i][j]);
+		}
+	}
+}
 
 void MazeGenerator::Generate()
 {
-	std::stack<Cell*> cellstack;
-	std::vector<Cell*> totalCells = getTotalCells();
-	std::vector<Cell*> visitedCells;
-	
-	Cell* currentCell = totalCells[totalCells.size() - 1];
+	std::vector<Cell*> walls;
 
-	visitedCells.push_back(currentCell); 
+	Cell* current = maze_[h_ - 1][0];
+	current->set_isInMaze(true);
 
-	while(visitedCells.size() < totalCells.size())
+	walls = getWalls(current);
+	Cell* opp;
+
+	while (walls.size() > 0)
 	{
-		std::cout << "v " << visitedCells.size() << " t " << totalCells.size() << std::endl;
-		std::string input ="";
-		getline(std::cin, input);
+		int min = 1;
+		int max = walls.size();
 
-		std::vector<Cell*> neighbors = getNeighbourds(currentCell, totalCells);
-		for(Cell* c: neighbors)
-		{
-			std::cout << *c << std::endl;
-		}
-		if (neighbors.size() > 0)
-		{
-			boost::random::uniform_int_distribution<> r(0, neighbors.size() - 1);
-			boost::random::mt19937 rng;
-			Cell* crandom = neighbors[r(rng)];
-			std::cout << *crandom << std::endl;
-			makeWall(currentCell, crandom);
-			Print();
+ 		std::srand(std::time(0));
 
-			cellstack.push(currentCell);
-			currentCell = crandom;
-			visitedCells.push_back(crandom);
+		int pos = min + (std::rand() % (int)(max - min + 1)) - 1;
+		
+		Cell* w = walls[pos];
+
+		opp = getOpposite(current, w);
+
+		if (opp != nullptr && !opp->get_isInMaze())
+		{
+			w->set_type(FREE);
+			w->set_isInMaze(true);
+			opp->set_type(FREE);
+			opp->set_isInMaze(true);
+			current = opp;
+			std::vector<Cell*> tmp = getWalls(current);
+			walls.erase(walls.begin() + pos);
+			walls.insert(walls.end(), tmp.begin(), tmp.end());
 		}
 		else
 		{
-			if (!cellstack.empty())
-			{
-				currentCell = cellstack.top();
-				cellstack.pop();
-			}
+			walls.erase(walls.begin() + pos);
 		}
-		// std::string input ="";
-		// getline(std::cin, input);
+		window_->set_maze(maze_);
+		window_->show();
+		usleep(2000);
 	}
-	totalCells.clear();
+	maze_[0][w_ - 1]->set_type(END);
 }
 
-void MazeGenerator::Print()
+
+// Start at a particular cell and call it the "exit."
+// Mark the current cell as visited, and get a list of its neighbors. 
+// For each neighbor, starting with a randomly selected neighbor:
+//     If that neighbor hasn't been visited, 
+		// remove the wall between this cell and that neighbor, and 
+		// then recurse with that neighbor as the current cell.
+
+
+void MazeGenerator::Generate2()
 {
-	std::cout << " ";
-	for (int i = 0; i < w_; ++i)
+	std::vector<Cell*> walls;
+
+	Cell* current = maze_[h_ - 1][0];
+	current->set_isInMaze(true);
+
+	walls = getWalls(current);
+	Cell* opp;
+
+	while (walls.size() > 0)
 	{
-		std::cout << i;
-	}
-	std::cout << std::endl;
-	for (int i = 0; i < h_; ++i)
-	{
-		std::cout << i;
-		for (int j = 0; j < w_; ++j)
+		int min = 1;
+		int max = walls.size();
+
+ 		std::srand(std::time(0));
+
+		int pos = min + (std::rand() % (int)(max - min + 1)) - 1;
+		
+		Cell* w = walls[pos];
+
+		opp = getOpposite(current, w);
+
+		if (opp != nullptr && !opp->get_isInMaze())
 		{
-			std::cout << maze_[i][j];
+			w->set_type(FREE);
+			w->set_isInMaze(true);
+			opp->set_type(FREE);
+			opp->set_isInMaze(true);
+			current = opp;
+			std::vector<Cell*> tmp = getWalls(current);
+			walls.erase(walls.begin() + pos);
+			walls.insert(walls.end(), tmp.begin(), tmp.end());
 		}
-		std::cout << std::endl;
+		else
+		{
+			walls.erase(walls.begin() + pos);
+		}
 	}
+	maze_[0][w_ - 1]->set_type(END);
 }
 
-std::vector<Cell*> MazeGenerator::getTotalCells()
-{
-	std::vector<Cell*> tmp;
-	for (int i = 0; i < h_; ++i)
-	{
-		for (int j = 0; j < w_; ++j)
-			{
-				Cell* c = new Cell(i, j);
-				c->set_type(FREE);
-				tmp.push_back(c);
-			}	
-	}
-	return tmp;
-}
 
-std::vector<Cell*> MazeGenerator::getNeighbourds(Cell* current, 
-												 std::vector<Cell*> totalCells)
+std::vector<Cell*> MazeGenerator::getWalls(Cell* curr)
 {
 	std::vector<std::vector<int> > adjacents;
 	adjacents.push_back({ 1, 0 });
@@ -114,87 +147,132 @@ std::vector<Cell*> MazeGenerator::getNeighbourds(Cell* current,
 	adjacents.push_back({ 0, 1 });
 	adjacents.push_back({ 0, -1 });
 
-	std::vector<std::vector<int> > adjacents2;
-	adjacents2.push_back({ 2, 0 });
-	adjacents2.push_back({ -2, 0 });
-	adjacents2.push_back({ 0, 2 });
-	adjacents2.push_back({ 0, -2 });
 	std::vector<Cell*> tmp;
+	int x = curr->get_x();
+	int y = curr->get_y();
 
-
-	int x = current->get_x();
-	int y = current->get_y();
 
 	for (int i = 0; i < 4; ++i)
     {
         int wtemp = x + adjacents[i][0];
         int htemp = y + adjacents[i][1];
-		int wtemp2 = x + adjacents2[i][0];
-        int htemp2 = y + adjacents2[i][1];
 
         if (wtemp >= 0 && htemp >= 0 && htemp < h_ && wtemp < w_)
         {
-        	if (maze_[htemp][wtemp] != 'w')
+        	if (maze_[htemp][wtemp]->get_type() == WALL)
         	{
-        		if (wtemp2 >= 0 && htemp2 >= 0 && htemp2 < h_ && wtemp2 < w_)
-        		{
-					for(Cell* c: totalCells)
-					{
-						if(c->get_x() == wtemp2 && c->get_y() == htemp2)
-						{	
-							tmp.push_back(c);
-						}
-					}
-        		}
+				tmp.push_back(maze_[htemp][wtemp]);
         	}
         }
 	}
-
 	return tmp;
 }
 
-
-void MazeGenerator::makeWall(Cell* c1, 
-			   				 Cell* c2)
+Cell* MazeGenerator::getOpposite (Cell* c, Cell* w)
 {
-	if (c1->get_x() == c2->get_x())
+	int xc = c->get_x();
+	int yc = c->get_y();
+
+	int xw = w->get_x();
+	int yw = w->get_y();
+
+	Cell* res = nullptr;
+	// axe vertical
+	if(xc == xw)
 	{
-		if (c2->get_y() > c1->get_y())
-		{
-			std::cout << "lol" << std::endl;
-			maze_[c1->get_y() + 1][c2->get_x()] = 'w';
+		// le wall est au dessus de la case
+		if (yc > yw)
+		{	
+			if (yw - 1 >= 0)
+			{
+				res = maze_[yw - 1][xw];
+			}
 		}
 		else
 		{
-			std::cout << "lol2" << std::endl;
-			maze_[c2->get_y() + 1][c2->get_x()] = 'w';
+			if (yw + 1 < h_)
+			{
+				res = maze_[yw + 1][xw];
+			}
 		}
 	}
 	else
 	{
-		if (c2->get_x() > c1->get_x())
+		// le wall est à gauche de la case
+		if (xc > xw)
 		{
-			std::cout << "lol3" << std::endl;
-
-			maze_[c1->get_y()][c1->get_x() + 1] = 'w';
+			if (xw - 1 >= 0)
+			{
+				res  = maze_[yw][xw - 1];
+			}
 		}
 		else
 		{
-			std::cout << "lol4" << std::endl;
-
-			maze_[c1->get_y()][c2->get_x() + 1] = 'w';
+			if (xw + 1 < w_)
+			{
+				res = maze_[yw][xw + 1];
+			}
 		}
+	}
+	return res;
+}
+
+void MazeGenerator::Print()
+{
+	std::cout << w_ << " " << h_ << std::endl;
+	for (int i = 0; i < h_; ++i)
+	{
+		for (int j = 0; j < w_; ++j)
+		{
+			Cell *c = maze_[i][j];
+			if (c->get_type() == WALL)
+		        std::cout << "w";
+		   	else if (c->get_type() == PATH)
+		        std::cout << "p";
+		    else if (c->get_type() == FREE)
+		        std::cout << "f";
+		    else if (c->get_type() == START)
+		        std::cout << "s";
+		    else if (c->get_type() == END)
+		        std::cout << "e";
+		    else if (c->get_type() == FLOW)
+		        std::cout << "^";
+		}
+		std::cout << std::endl;
 	}
 }
 
+// int MazeGenerator::get_h() const
+// {
+// 	return h_;
+// }
+
+// int MazeGenerator::get_w() const
+// {
+// 	return w_;
+// }
+
+// std::vector<std::vector<Cell*> > MazeGenerator::get_maze_() const
+// {
+// 	return maze_;
+// }
+
+// Colors MazeGenerator::get_window() const
+// {
+// 	return window_;
+// }
 
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
-	MazeGenerator maze = MazeGenerator(10, 10);
-	// maze.Print();
+	char **argv2 = argv;
+    QApplication app(argc, argv);
+    Colors* window_ = new Colors();
 
+	MazeGenerator maze = MazeGenerator(std::stoi(argv2[1]), std::stoi(argv2[2]), window_);
 	maze.Generate();
 	maze.Print();
+
+	app.exec();
 	return 0;
 }
