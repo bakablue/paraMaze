@@ -1,11 +1,5 @@
 #include "parser.hh"
-#include <boost/algorithm/string.hpp>
-#include<boost/algorithm/string/split.hpp>
-#include <vector>
-#include <sstream>
-#include <string>
-#include <QApplication>
-#include <QWidget>
+
 
 Parser::Parser()
 {

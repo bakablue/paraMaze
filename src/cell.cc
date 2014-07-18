@@ -45,7 +45,26 @@ int Cell::get_x() const
 
 int Cell::get_y() const
 {
-    return y_;
+	return y_;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Cell& obj)
+{
+    if (obj.get_type() == WALL)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", W)";
+   	else if (obj.get_type() == PATH)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", P)";
+    else if (obj.get_type() == FREE)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", F)";
+    else if (obj.get_type() == START)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", S)";
+    else if (obj.get_type() == END)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", E)";
+    else if (obj.get_type() == FLOW)
+        os << "Cell("<< obj.get_x() << ", " << obj.get_y() << ", ^)";
+
+    return os;
 }
 
 Cell* Cell::get_pointed() const
@@ -56,4 +75,14 @@ Cell* Cell::get_pointed() const
 void Cell::set_pointed(Cell* p)
 {
     pointed_ = p;
+}
+
+void Cell::set_isInMaze(bool b)
+{
+	isInMaze_ = b;
+}
+        
+bool Cell::get_isInMaze()
+{
+	return isInMaze_;
 }

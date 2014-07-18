@@ -4,6 +4,13 @@
 # include <fstream>
 # include <iostream>
 # include <map>
+# include <boost/algorithm/string.hpp>
+# include <boost/algorithm/string/split.hpp>
+# include <vector>
+# include <sstream>
+# include <string>
+# include <QApplication>
+# include <QWidget>
 
 # include "map.hh"
 # include "colors.hh"
