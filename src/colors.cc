@@ -22,6 +22,7 @@ void Colors::paintEvent(QPaintEvent *e)
     int width = 10;
     int height = 10;
     e_type_cell t;
+    Cell *current;
 
     Q_UNUSED(e);
 
@@ -32,11 +33,34 @@ void Colors::paintEvent(QPaintEvent *e)
     {
         for (j = 0; j < map_->get_height(); j++)
         {
-            t = map_->get_map()->find(i * j + i)->second->get_type();
+            current = map_->get_map()->find(j * map_->get_width() + i)->second;
+            t = current->get_type();
             if (t == WALL)
                 painter.setBrush(QBrush("#c56c00"));
             else if (t == FREE)
                 painter.setBrush(QBrush("#1ac500"));
+            else if (t == PATH)
+                painter.setBrush(QBrush("#005AA4"));
+            else if (t == END)
+                painter.setBrush(QBrush("#FF0000"));
+            else if (t == START)
+                painter.setBrush(QBrush("#FF0000"));
+            else if (t == FLOW)
+            {
+                painter.setBrush(QBrush("#1ac500"));
+                painter.drawRect(i * width, j * height, width, height);
+
+                // temporary test
+                if (current->get_x() - current->get_pointed()->get_x() > 0)
+                    painter.setBrush(QBrush(QPixmap("../gui/img/left.png")));
+                else if (current->get_x() - current->get_pointed()->get_x() < 0)
+                    painter.setBrush(QBrush(QPixmap("../gui/img/right.png")));
+                else if (current->get_y() - current->get_pointed()->get_y() < 0)
+                    painter.setBrush(QBrush(QPixmap("../gui/img/down.png")));
+                else if (current->get_y() - current->get_pointed()->get_y() > 0)
+                    painter.setBrush(QBrush(QPixmap("../gui/img/up.png")));
+
+            }
 
             painter.drawRect(i * width, j * height, width, height);
         }
