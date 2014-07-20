@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = 
+TARGET = maze
 DEPENDPATH += .
 INCLUDEPATH += .
 
@@ -11,7 +11,6 @@ INCLUDEPATH += .
 HEADERS += cell.hh colors.hh interface.hh map.hh mazegenerator.hh parser.hh
 SOURCES += cell.cc \
            colors.cc \
-           interface.cc \
            main.cc \
            mainmg.cc \
            map.cc \

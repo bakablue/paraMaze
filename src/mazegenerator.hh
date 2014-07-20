@@ -5,6 +5,7 @@
 # include <map>
 # include <stack>
 # include <ctime>
+# include <QtGui>
 # include <QApplication>
 # include <QWidget>
 # include <QThread>
