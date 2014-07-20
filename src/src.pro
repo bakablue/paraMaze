@@ -12,7 +12,6 @@ HEADERS += cell.hh colors.hh interface.hh map.hh mazegenerator.hh parser.hh
 SOURCES += cell.cc \
            colors.cc \
            main.cc \
-           mainmg.cc \
            map.cc \
            mazegenerator.cc \
            parser.cc
