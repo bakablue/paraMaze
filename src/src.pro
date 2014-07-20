@@ -3,12 +3,12 @@
 ######################################################################
 
 TEMPLATE = app
+TARGET = paramaze
 DEPENDPATH += .
 INCLUDEPATH += .
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LIBS += -ltbb
 QMAKE_TARGET = paramaze
-TARGET = paramaze
 
 # Input
 HEADERS += algo_path.hh \
