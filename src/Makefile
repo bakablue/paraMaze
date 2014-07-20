@@ -65,6 +65,8 @@ DIST          = /usr/share/qt4/mkspecs/common/unix.conf \
 		/usr/share/qt4/mkspecs/common/g++-base.conf \
 		/usr/share/qt4/mkspecs/common/g++-unix.conf \
 		/usr/share/qt4/mkspecs/qconfig.pri \
+		/usr/share/qt4/mkspecs/modules/qt_phonon.pri \
+		/usr/share/qt4/mkspecs/modules/qt_webkit.pri \
 		/usr/share/qt4/mkspecs/features/qt_functions.prf \
 		/usr/share/qt4/mkspecs/features/qt_config.prf \
 		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
@@ -121,6 +123,8 @@ Makefile: src.pro  /usr/share/qt4/mkspecs/linux-g++/qmake.conf /usr/share/qt4/mk
 		/usr/share/qt4/mkspecs/common/g++-base.conf \
 		/usr/share/qt4/mkspecs/common/g++-unix.conf \
 		/usr/share/qt4/mkspecs/qconfig.pri \
+		/usr/share/qt4/mkspecs/modules/qt_phonon.pri \
+		/usr/share/qt4/mkspecs/modules/qt_webkit.pri \
 		/usr/share/qt4/mkspecs/features/qt_functions.prf \
 		/usr/share/qt4/mkspecs/features/qt_config.prf \
 		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
@@ -148,6 +152,8 @@ Makefile: src.pro  /usr/share/qt4/mkspecs/linux-g++/qmake.conf /usr/share/qt4/mk
 /usr/share/qt4/mkspecs/common/g++-base.conf:
 /usr/share/qt4/mkspecs/common/g++-unix.conf:
 /usr/share/qt4/mkspecs/qconfig.pri:
+/usr/share/qt4/mkspecs/modules/qt_phonon.pri:
+/usr/share/qt4/mkspecs/modules/qt_webkit.pri:
 /usr/share/qt4/mkspecs/features/qt_functions.prf:
 /usr/share/qt4/mkspecs/features/qt_config.prf:
 /usr/share/qt4/mkspecs/features/exclusive_builds.prf:
