@@ -3,10 +3,10 @@
 
 class Interface
 {
-    public:
-        Interface();
-        void test();
-    private:
+public:
+  Interface();
+  void test();
+private:
 };
 
 #endif /* !INTERFACE_HH */
