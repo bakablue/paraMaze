@@ -12,4 +12,4 @@ gui:
 	$(CC) $$(pkg-config --cflags --libs QtCore QtGui) -o interface interface.cc colors.cc
 
 generator:
-	$(CC) $$(pkg-config --cflags --libs QtCore QtGui) $(CFLAGS) $(LDFLAGS) -o gene mazegenerator.cc cell.cc colors.cc map.cc
+	$(CC) $$(pkg-config --cflags --libs QtCore QtGui) $(CFLAGS) $(LDFLAGS) -o gene mainmg.cc mazegenerator.cc cell.cc colors.cc map.cc

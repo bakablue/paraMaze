@@ -109,44 +109,18 @@ void Colors::paintEvent(QPaintEvent *e)
             }
         }
     }
-    /*painter.setPen(QColor("#d4d4d4"));
-
-      painter.setBrush(QBrush("#c56c00"));
-      painter.drawRect(10, 15, 50, 50);
-
-      painter.setBrush(QBrush("#1ac500"));
-      painter.drawRect(130, 15, 50, 50);
-
-      painter.setBrush(QBrush("#539e47"));
-      painter.drawRect(250, 15, 50, 50);
-
-      painter.setBrush(QBrush("#004fc5"));
-      painter.drawRect(10, 105, 50, 50);
-
-      painter.setBrush(QBrush("#c50024"));
-      painter.drawRect(130, 105, 50, 50);
-
-      painter.setBrush(QBrush("#9e4757"));
-      painter.drawRect(250, 105, 50, 50);
-
-      painter.setBrush(QBrush("#5f3b00"));
-      painter.drawRect(10, 195, 50, 50);
-
-      painter.setBrush(QBrush("#4c4c4c"));
-      painter.drawRect(130, 195, 50, 50);
-
-      painter.setBrush(QBrush("#785f36"));
-      painter.drawRect(250, 195, 50, 50);*/
 }
 
 void Colors::set_map(Map* map)
 {
     map_ = map;
+    update();
 }
 
 void Colors::set_maze(std::vector<std::vector<Cell*> >  maze)
 {
     maze_ = maze;
+    update();
 }
 
 void Colors::set_isMaze(bool v)

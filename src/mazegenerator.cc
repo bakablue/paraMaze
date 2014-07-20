@@ -1,10 +1,15 @@
 #include "mazegenerator.hh"
 
+// MazeGenerator::MazeGenerator(MazeGenerator &mg)
+// {
 
-MazeGenerator::MazeGenerator(int h, int w, Colors* win)
-	: h_(h)
+// }
+
+
+MazeGenerator::MazeGenerator(int h, int w)
+	: QThread()
+	, h_(h)
 	, w_(w)
-	, window_(win)
 {
 	maze_ = std::vector<std::vector<Cell*> >(h);
 	for (int i = 0; i < h; ++i)
@@ -22,12 +27,7 @@ MazeGenerator::MazeGenerator(int h, int w, Colors* win)
 		}
 	}
 	maze_[h - 1][0]->set_type(START);
-
-    window_->set_maze(maze_);
-    window_->set_isMaze(true);
-    window_->resize(250, 150);
-    window_->setWindowTitle("yolo");
-    window_->show();
+	emit sendMaze(maze_);
 }
 
 
@@ -80,60 +80,8 @@ void MazeGenerator::Generate()
 		{
 			walls.erase(walls.begin() + pos);
 		}
-		window_->set_maze(maze_);
-		window_->show();
+		emit sendMaze(maze_);
 		usleep(2000);
-	}
-	maze_[0][w_ - 1]->set_type(END);
-}
-
-
-// Start at a particular cell and call it the "exit."
-// Mark the current cell as visited, and get a list of its neighbors. 
-// For each neighbor, starting with a randomly selected neighbor:
-//     If that neighbor hasn't been visited, 
-		// remove the wall between this cell and that neighbor, and 
-		// then recurse with that neighbor as the current cell.
-
-
-void MazeGenerator::Generate2()
-{
-	std::vector<Cell*> walls;
-
-	Cell* current = maze_[h_ - 1][0];
-	current->set_isInMaze(true);
-
-	walls = getWalls(current);
-	Cell* opp;
-
-	while (walls.size() > 0)
-	{
-		int min = 1;
-		int max = walls.size();
-
- 		std::srand(std::time(0));
-
-		int pos = min + (std::rand() % (int)(max - min + 1)) - 1;
-		
-		Cell* w = walls[pos];
-
-		opp = getOpposite(current, w);
-
-		if (opp != nullptr && !opp->get_isInMaze())
-		{
-			w->set_type(FREE);
-			w->set_isInMaze(true);
-			opp->set_type(FREE);
-			opp->set_isInMaze(true);
-			current = opp;
-			std::vector<Cell*> tmp = getWalls(current);
-			walls.erase(walls.begin() + pos);
-			walls.insert(walls.end(), tmp.begin(), tmp.end());
-		}
-		else
-		{
-			walls.erase(walls.begin() + pos);
-		}
 	}
 	maze_[0][w_ - 1]->set_type(END);
 }
@@ -242,37 +190,7 @@ void MazeGenerator::Print()
 	}
 }
 
-// int MazeGenerator::get_h() const
-// {
-// 	return h_;
-// }
-
-// int MazeGenerator::get_w() const
-// {
-// 	return w_;
-// }
-
-// std::vector<std::vector<Cell*> > MazeGenerator::get_maze_() const
-// {
-// 	return maze_;
-// }
-
-// Colors MazeGenerator::get_window() const
-// {
-// 	return window_;
-// }
-
-
-int main(int argc, char *argv[])
+void MazeGenerator::run()
 {
-	char **argv2 = argv;
-    QApplication app(argc, argv);
-    Colors* window_ = new Colors();
-
-	MazeGenerator maze = MazeGenerator(std::stoi(argv2[1]), std::stoi(argv2[2]), window_);
-	maze.Generate();
-	maze.Print();
-
-	app.exec();
-	return 0;
+	Generate();
 }
