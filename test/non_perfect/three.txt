@@ -1,0 +1,19 @@
+17 17
+8 8
+fffffffffffffffff
+fwwwwwwwwwwwwwwwf
+fwfffffffffffffwf
+fwfwwwwwwwwwwwfwf
+fwfwfffffffffwfwf
+fwfwfwwwwwwwfwfwf
+fwfwfwfffffwfwfwf
+fwfwfwfwwwfwfwfwf
+fwfwfwffswfwfwfwf
+fwfwfwwwwwfwfwfwf
+fwfwfffffffwfwfwf
+fwfwwwwwwwwwfwfwf
+fwfffffffffffwfwf
+fwwwwwwwwwwwwwfwf
+fffffffffffffffwf
+wwwwwwwwwwwwwwwwf
+effffffffffffffff

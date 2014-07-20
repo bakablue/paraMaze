@@ -2,6 +2,7 @@
 # define COLORS_HH
 
 # include <QWidget>
+# include <QMouseEvent>
 
 # include "map.hh"
 
@@ -21,7 +22,7 @@ class Colors : public QWidget
 
         public slots:
             void set_maze(TMaze maze);
-        void update_gui();
+            void update_gui();
 
     private:
         Map* map_;
@@ -29,6 +30,7 @@ class Colors : public QWidget
         bool isMaze_;
     protected:
         void paintEvent(QPaintEvent *event);
+        void mousePressEvent(QMouseEvent *mouse);
 };
 
 #endif /* !COLORS_HH */
