@@ -1,11 +1,5 @@
 #include "mazegenerator.hh"
 
-// MazeGenerator::MazeGenerator(MazeGenerator &mg)
-// {
-
-// }
-
-
 MazeGenerator::MazeGenerator(int h, int w)
     : QThread()
     , h_(h)
@@ -84,6 +78,9 @@ void MazeGenerator::Generate()
         usleep(50000);
     }
     maze_[0][w_ - 1]->set_type(END);
+    emit sendMaze(maze_);
+    Print();
+    std::cout << "fini" << std::endl;
 }
 
 
