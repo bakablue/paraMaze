@@ -80,8 +80,10 @@ void MazeGenerator::Generate()
 		{
 			walls.erase(walls.begin() + pos);
 		}
+		std::cout << std::endl;
+		Print();
 		emit sendMaze(maze_);
-		usleep(2000);
+		usleep(50000);
 	}
 	maze_[0][w_ - 1]->set_type(END);
 }

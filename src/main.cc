@@ -31,6 +31,7 @@ int main(int argc, char *argv[])
 			MazeGenerator *maze = new MazeGenerator(std::stoi(argv2[2]), std::stoi(argv2[3]));
 			// maze.Generate();
 			// maze.Print();
+            qRegisterMetaType<TMaze>("TMaze");
 
 			QObject::connect(maze, SIGNAL(sendMaze(TMaze)), window_, SLOT(set_maze(TMaze)), Qt::QueuedConnection);
 

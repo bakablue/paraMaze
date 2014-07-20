@@ -10,6 +10,8 @@ typedef std::vector<std::vector<Cell*> > TMaze;
 
 class Colors : public QWidget
 {
+        Q_OBJECT
+
     public:
         Colors(QWidget *parent, Map* map);
         Colors();
