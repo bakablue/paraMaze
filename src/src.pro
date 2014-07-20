@@ -6,6 +6,7 @@ TEMPLATE = app
 TARGET = maze
 DEPENDPATH += .
 INCLUDEPATH += .
+QMAKE_CXXFLAGS += -std=c++11
 
 # Input
 HEADERS += cell.hh colors.hh interface.hh map.hh mazegenerator.hh parser.hh
