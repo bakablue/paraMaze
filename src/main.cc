@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     if (argc == 1)
     {
         std::cout << "Usage : ./maze --solve [--gui] [-p] test.txt [...]" << std::endl;
-        std::cout << "        ./maze --generate hauteur largeur" << std::endl;
+        std::cout << "        ./maze --generate [--perfect] hauteur largeur" << std::endl;
         return 1;
     }
     if (argc >= 1)
