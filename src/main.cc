@@ -63,6 +63,11 @@ int main(int argc, char *argv[])
         }
         else if (argv[1] == std::string("--generate"))
         {
+            bool perfect = false;
+            if (argc > 2 && argv[2] == std::string("--perfect"))
+            {
+                perfect = true;
+            }
             char **argv2 = argv;
             QApplication app(argc, argv);
             Colors* window_ = new Colors();
@@ -70,7 +75,7 @@ int main(int argc, char *argv[])
             window_->resize(250, 150);
             window_->setWindowTitle("ParaMaze");
 
-            MazeGenerator *maze = new MazeGenerator(std::stoi(argv2[2]), std::stoi(argv2[3]));
+            MazeGenerator *maze = new MazeGenerator(std::stoi(argv2[3]), std::stoi(argv2[4]), perfect);
             // maze.Generate();
             // maze.Print();
 
