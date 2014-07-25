@@ -1,5 +1,20 @@
 #include "parser.hh"
 #include "mazegenerator.hh"
+#include "algo_path.hh"
+#include <thread>
+
+void init_gui(int argc, char* argv[], Map *map)
+{
+    QApplication app(argc, argv);
+
+    Colors window;
+    window.set_map(map);
+    window.resize(250, 150);
+    window.setWindowTitle("yolo");
+    window.show();
+
+    app.exec();
+}
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +31,15 @@ int main(int argc, char *argv[])
             for (int i = 2; i < argc; i++)
             {
                 Parser p = Parser(argv[i]);
-                p.parse(argc, argv);
+                p.parse();
+                std::thread gui(init_gui, argc, argv, p.get_map());
+                AlgoPath algo;
+                algo.set_map(p.get_map());
+                algo.set_option(1);
+                algo.start();
+                // wait for thread
+                gui.join();
+
             }
         }
         else if (argv[1] == std::string("--generate"))

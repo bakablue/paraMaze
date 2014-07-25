@@ -33,7 +33,7 @@ Map* Parser::get_map() const
     return map_;
 }
 
-int Parser::parse(int argc, char* argv[])
+int Parser::parse()
 {
     std::string line;
     std::vector<std::string> elts;
@@ -69,13 +69,7 @@ int Parser::parse(int argc, char* argv[])
                 map_->set_cell(i, j, line[i]);
             j++;
         }
-        std::thread gui(&Parser::init_gui, this, argc, argv);
-        map_->display();
-        map_->standard_solve_any_maze();
         file_.close();
-        // wait for thread
-        gui.join();
-
         return 0;
     }
     else
@@ -84,15 +78,3 @@ int Parser::parse(int argc, char* argv[])
     return 1;
 }
 
-void Parser::init_gui(int argc, char* argv[])
-{
-    QApplication app(argc, argv);
-
-    Colors window_;
-    window_.set_map(map_);
-    window_.resize(250, 150);
-    window_.setWindowTitle("yolo");
-    window_.show();
-
-    app.exec();
-}
