@@ -3,7 +3,8 @@
 std::vector<std::vector<int> > Map::adjacents;
 
 Map::Map()
-    : width_(0)
+    : QThread()
+    , width_(0)
     , height_(0)
     , istart_(0)
     , jstart_(0)

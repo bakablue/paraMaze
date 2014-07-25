@@ -127,3 +127,8 @@ void Colors::set_isMaze(bool v)
 {
     isMaze_ = v;
 }
+
+void Colors::on_update_map(int i, int j)
+{
+    std::cout << "Update map on cell " << i << " " << j << std::endl;
+}
