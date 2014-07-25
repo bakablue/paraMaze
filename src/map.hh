@@ -3,7 +3,6 @@
 
 # include <map>
 # include <istream>
-# include <QThread>
 
 # include "cell.hh"
 
@@ -28,7 +27,6 @@ class Map
         Cell* get_start_cell() const;
 
         Map* operator=(Map *map);
-
     private:
         std::map<int, Cell*> *map_;
         int width_;

@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include <thread>
 
 
 Parser::Parser()
