@@ -6,6 +6,7 @@
 
 class AlgoPath : public QThread
 {
+    Q_OBJECT
     public:
         AlgoPath();
         ~AlgoPath();
@@ -51,9 +52,9 @@ class AlgoPath : public QThread
     protected:
         void run();
 
-        Q_OBJECT
-            signals:
-            void update_gui();
+signals:
+        void update_gui();
+        void update_map(int i, int j);
 
     private:
         Map *map_;

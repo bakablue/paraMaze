@@ -44,50 +44,6 @@ MazeGenerator::~MazeGenerator()
 
 void MazeGenerator::Generate()
 {
-<<<<<<< HEAD
-	std::vector<Cell*> walls;
-
-	Cell* current = maze_[h_ - 1][0];
-	current->set_isInMaze(true);
-
-	walls = getWalls(current);
-	Cell* opp;
-
-	while (walls.size() > 0)
-	{
-		int min = 1;
-		int max = walls.size();
-
- 		std::srand(std::time(0));
-
-		int pos = min + (std::rand() % (int)(max - min + 1)) - 1;
-		
-		Cell* w = walls[pos];
-
-		opp = getOpposite(current, w);
-
-		if (opp != nullptr && !opp->get_isInMaze())
-		{
-			w->set_type(FREE);
-			w->set_isInMaze(true);
-			opp->set_type(FREE);
-			opp->set_isInMaze(true);
-			current = opp;
-			std::vector<Cell*> tmp = getWalls(current);
-			walls.erase(walls.begin() + pos);
-			walls.insert(walls.end(), tmp.begin(), tmp.end());
-		}
-		else
-		{
-			walls.erase(walls.begin() + pos);
-		}
-		std::cout << std::endl;
-		Print();
-		emit sendMaze(maze_);
-		usleep(50000);
-	}
-	maze_[0][w_ - 1]->set_type(END);
-=======
     std::vector<Cell*> walls;
 
     Cell* current = maze_[h_ - 1][0];
@@ -104,7 +60,7 @@ void MazeGenerator::Generate()
         std::srand(std::time(0));
 
         int pos = min + (std::rand() % (int)(max - min + 1)) - 1;
-        
+
         Cell* w = walls[pos];
 
         opp = getOpposite(current, w);
@@ -128,7 +84,6 @@ void MazeGenerator::Generate()
         usleep(50000);
     }
     maze_[0][w_ - 1]->set_type(END);
->>>>>>> testgui
 }
 
 

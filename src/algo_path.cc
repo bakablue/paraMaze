@@ -200,12 +200,9 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
 
 void AlgoPath::run()
 {
-    //map_->display();
-
-    std::cout << "run" << std::endl;
+    map_->display();
     if (option_ == 1)
         standard_solve_any_maze();
     else
         standard_solve_perfect_maze();
-
 }

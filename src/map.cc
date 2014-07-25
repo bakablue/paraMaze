@@ -10,12 +10,12 @@ Map::Map()
 }
 
 Map::Map(int width, int height)
-    : width_(width)
-    , height_(height)
-    , istart_(0)
-    , jstart_(0)
+  : width_(width)
+  , height_(height)
+  , istart_(0)
+  , jstart_(0)
 {
-    map_ = new std::map<int, Cell*>();
+  map_ = new std::map<int, Cell*>();
 }
 
 Map::~Map()
@@ -31,34 +31,34 @@ Map::Map(const Map* m)
 
 std::map<int, Cell*>* Map::get_map() const
 {
-    return map_;
+  return map_;
 }
 
 int Map::get_width() const
 {
-    return width_;
+  return width_;
 }
 
 int Map::get_height() const
 {
-    return height_;
+  return height_;
 }
 
 void Map::set_cell(int x, int y, char type)
 {
-    Cell *c = new Cell(x, y);
-    if (type == 'w')
-        c->set_type(WALL);
-    else if (type == 'f')
-        c->set_type(FREE);
-    else if (type == 's')
-        c->set_type(START);
-    else if (type == 'e')
-        c->set_type(END);
-    else if (type == 'p')
-        c->set_type(PATH);
+  Cell *c = new Cell(x, y);
+  if (type == 'w')
+    c->set_type(WALL);
+  else if (type == 'f')
+    c->set_type(FREE);
+  else if (type == 's')
+    c->set_type(START);
+  else if (type == 'e')
+    c->set_type(END);
+  else if (type == 'p')
+    c->set_type(PATH);
 
-    map_->insert(std::pair<int, Cell*> (y * width_ + x, c));
+  map_->insert(std::pair<int, Cell*> (y * width_ + x, c));
 }
 
 Cell* Map::get_cell(int x, int y)
@@ -88,16 +88,15 @@ void Map::display()
     }
 }
 
-
 Map* Map::operator=(Map *map)
 {
-    // Good copy ?
-    return map;
+  // Good copy ?
+  return map;
 }
 
 void Map::set_start_cell(int istart, int jstart)
 {
-    istart_ = istart;
-    jstart_ = jstart;
+  istart_ = istart;
+  jstart_ = jstart;
 }
 

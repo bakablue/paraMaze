@@ -19,8 +19,8 @@ class Colors : public QWidget
         void set_map(Map* map);
         void set_isMaze(bool v);
 
-    public slots:
-        void set_maze(TMaze maze);
+        public slots:
+            void set_maze(TMaze maze);
         void update_gui();
 
     private:

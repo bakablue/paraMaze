@@ -27,6 +27,7 @@ class Map
         Cell* get_start_cell() const;
 
         Map* operator=(Map *map);
+
     private:
         std::map<int, Cell*> *map_;
         int width_;
