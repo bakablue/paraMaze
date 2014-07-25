@@ -21,27 +21,26 @@ int main(int argc, char *argv[])
         {
             for (int i = 2; i < argc; i++)
             {
-                Parser p = Parser(argv[i]);
-                p.parse();
-//                std::thread gui(init_gui, argc, argv, p.get_map());
-                AlgoPath *algo = new AlgoPath();
-                algo->set_map(p.get_map());
-                algo->set_option(1);
-                // wait for thread
-                QApplication app(argc, argv);
+                //Parser p = Parser(argv[i]);
+                //p.parse();
+//              //  std::thread gui(init_gui, argc, argv, p.get_map());
+                //AlgoPath *algo = new AlgoPath();
+                //algo->set_map(p.get_map());
+                //algo->set_option(1);
+                //// wait for thread
+                //QApplication app(argc, argv);
 
-                Colors *window = new Colors();
-                window->set_map(p.get_map());
-                window->resize(250, 150);
-                window->setWindowTitle("ParaMaze");
+                //Colors *window = new Colors();
+                //window->set_map(p.get_map());
+                //window->resize(250, 150);
+                //window->setWindowTitle("ParaMaze");
 
-                QObject::connect(algo, SIGNAL(update_gui()), window, SLOT(update_gui()), Qt::QueuedConnection);
-                window->show();
-                algo->start();
-                app.exec();
-                algo->wait();
-                algo->quit();
-                //            gui.join();
+                //QObject::connect(algo, SIGNAL(update_gui()), window, SLOT(update_gui()), Qt::QueuedConnection);
+                //algo->start();
+                //window->show();
+                //app.exec();
+                //algo->wait();
+                //algo->quit();
 
             }
         }

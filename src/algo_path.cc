@@ -118,6 +118,9 @@ void AlgoPath::algo_solve_path(Cell* current)
     if (current->get_type() != START)
         algo_solve_path(current->get_pointed());
     current->set_type(PATH);
+    emit update_gui();
+    std::cout << "yolo" << std::endl;
+    usleep(2000);
 }
 
 void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
@@ -197,8 +200,9 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
 
 void AlgoPath::run()
 {
-    map_->display();
+    //map_->display();
 
+    std::cout << "run" << std::endl;
     if (option_ == 1)
         standard_solve_any_maze();
     else
