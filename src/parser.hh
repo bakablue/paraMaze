@@ -23,6 +23,7 @@ public:
   Parser(const Parser& p);
   ~Parser();
 
+<<<<<<< HEAD
   char* get_filename() const;
   Map* get_map() const;
   void init_gui(int argc, char* argv[]);
@@ -33,6 +34,16 @@ private:
   std::fstream file_;
   Map *map_;
   //Colors window_;
+=======
+        char* get_filename() const;
+        Map* get_map() const;
+
+        int parse();
+    private:
+        char* filename_;
+        std::fstream file_;
+        Map *map_;
+>>>>>>> Separation of the algo from the class map
 };
 
 #endif /* !PARSER_HH */

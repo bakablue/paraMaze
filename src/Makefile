@@ -11,8 +11,13 @@
 CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED
+<<<<<<< HEAD
 CFLAGS        = -pipe -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT $(DEFINES)
 CXXFLAGS      = -pipe -std=c++11 -g -ggdb -march=x86-64 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT $(DEFINES)
+=======
+CFLAGS        = -pipe -march=i686 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT $(DEFINES)
+CXXFLAGS      = -pipe -std=c++11 -march=i686 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -Wall -W -D_REENTRANT $(DEFINES)
+>>>>>>> Separation of the algo from the class map
 INCPATH       = -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4 -I. -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1,--sort-common,--as-needed,-z,relro -Wl,-O1
@@ -43,20 +48,36 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = cell.cc \
+SOURCES       = algo_path.cc \
+		cell.cc \
 		colors.cc \
+		guicell.cc \
+		interface.cc \
 		main.cc \
 		map.cc \
 		mazegenerator.cc \
+<<<<<<< HEAD
 		parser.cc moc_colors.cpp \
 		moc_mazegenerator.cpp
 OBJECTS       = cell.o \
+=======
+		parser.cc moc_algo_path.cpp \
+		moc_mazegenerator.cpp
+OBJECTS       = algo_path.o \
+		cell.o \
+>>>>>>> Separation of the algo from the class map
 		colors.o \
+		guicell.o \
+		interface.o \
 		main.o \
 		map.o \
 		mazegenerator.o \
 		parser.o \
+<<<<<<< HEAD
 		moc_colors.o \
+=======
+		moc_algo_path.o \
+>>>>>>> Separation of the algo from the class map
 		moc_mazegenerator.o
 DIST          = /usr/share/qt4/mkspecs/common/unix.conf \
 		/usr/share/qt4/mkspecs/common/linux.conf \
@@ -83,9 +104,9 @@ DIST          = /usr/share/qt4/mkspecs/common/unix.conf \
 		/usr/share/qt4/mkspecs/features/lex.prf \
 		/usr/share/qt4/mkspecs/features/include_source_dir.prf \
 		src.pro
-QMAKE_TARGET  = maze
+QMAKE_TARGET  = src
 DESTDIR       = 
-TARGET        = maze
+TARGET        = src
 
 first: all
 ####### Implicit rules
@@ -171,8 +192,8 @@ qmake:  FORCE
 	@$(QMAKE) -o Makefile src.pro
 
 dist: 
-	@$(CHK_DIR_EXISTS) .tmp/maze1.0.0 || $(MKDIR) .tmp/maze1.0.0 
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/maze1.0.0/ && $(COPY_FILE) --parents cell.hh colors.hh interface.hh map.hh mazegenerator.hh parser.hh .tmp/maze1.0.0/ && $(COPY_FILE) --parents cell.cc colors.cc main.cc map.cc mazegenerator.cc parser.cc .tmp/maze1.0.0/ && (cd `dirname .tmp/maze1.0.0` && $(TAR) maze1.0.0.tar maze1.0.0 && $(COMPRESS) maze1.0.0.tar) && $(MOVE) `dirname .tmp/maze1.0.0`/maze1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/maze1.0.0
+	@$(CHK_DIR_EXISTS) .tmp/src1.0.0 || $(MKDIR) .tmp/src1.0.0 
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/src1.0.0/ && $(COPY_FILE) --parents algo_path.hh cell.hh colors.hh guicell.hh interface.hh map.hh mazegenerator.hh parser.hh .tmp/src1.0.0/ && $(COPY_FILE) --parents algo_path.cc cell.cc colors.cc guicell.cc interface.cc main.cc map.cc mazegenerator.cc parser.cc .tmp/src1.0.0/ && (cd `dirname .tmp/src1.0.0` && $(TAR) src1.0.0.tar src1.0.0 && $(COMPRESS) src1.0.0.tar) && $(MOVE) `dirname .tmp/src1.0.0`/src1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/src1.0.0
 
 
 clean:compiler_clean 
@@ -193,6 +214,7 @@ mocclean: compiler_moc_header_clean compiler_moc_source_clean
 
 mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 
+<<<<<<< HEAD
 compiler_moc_header_make_all: moc_colors.cpp moc_mazegenerator.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_colors.cpp moc_mazegenerator.cpp
@@ -200,6 +222,15 @@ moc_colors.cpp: map.hh \
 		cell.hh \
 		colors.hh
 	/usr/lib/qt4/bin/moc $(DEFINES) $(INCPATH) colors.hh -o moc_colors.cpp
+=======
+compiler_moc_header_make_all: moc_algo_path.cpp moc_mazegenerator.cpp
+compiler_moc_header_clean:
+	-$(DEL_FILE) moc_algo_path.cpp moc_mazegenerator.cpp
+moc_algo_path.cpp: map.hh \
+		cell.hh \
+		algo_path.hh
+	/usr/lib/qt4/bin/moc $(DEFINES) $(INCPATH) algo_path.hh -o moc_algo_path.cpp
+>>>>>>> Separation of the algo from the class map
 
 moc_mazegenerator.cpp: cell.hh \
 		colors.hh \
@@ -226,6 +257,11 @@ compiler_clean: compiler_moc_header_clean
 
 ####### Compile
 
+algo_path.o: algo_path.cc algo_path.hh \
+		map.hh \
+		cell.hh
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o algo_path.o algo_path.cc
+
 cell.o: cell.cc cell.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cell.o cell.cc
 
@@ -234,11 +270,20 @@ colors.o: colors.cc colors.hh \
 		cell.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o colors.o colors.cc
 
+guicell.o: guicell.cc 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o guicell.o guicell.cc
+
+interface.o: interface.cc colors.hh \
+		map.hh \
+		cell.hh
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interface.o interface.cc
+
 main.o: main.cc parser.hh \
 		map.hh \
 		cell.hh \
 		colors.hh \
-		mazegenerator.hh
+		mazegenerator.hh \
+		algo_path.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cc
 
 map.o: map.cc map.hh \
@@ -257,8 +302,13 @@ parser.o: parser.cc parser.hh \
 		colors.hh
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o parser.o parser.cc
 
+<<<<<<< HEAD
 moc_colors.o: moc_colors.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_colors.o moc_colors.cpp
+=======
+moc_algo_path.o: moc_algo_path.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_algo_path.o moc_algo_path.cpp
+>>>>>>> Separation of the algo from the class map
 
 moc_mazegenerator.o: moc_mazegenerator.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mazegenerator.o moc_mazegenerator.cpp
