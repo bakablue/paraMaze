@@ -1,5 +1,4 @@
 #include "parser.hh"
-#include <thread>
 
 
 Parser::Parser()
@@ -69,12 +68,10 @@ int Parser::parse(int argc, char* argv[])
                 map_->set_cell(i, j, line[i]);
             j++;
         }
-        std::thread gui(&Parser::init_gui, this, argc, argv);
         map_->display();
         map_->standard_solve_any_maze();
+        init_gui(argc, argv);
         file_.close();
-        // wait for thread
-        gui.join();
 
         return 0;
     }

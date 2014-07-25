@@ -7,7 +7,6 @@
 
 typedef std::vector<std::vector<Cell*> > TMaze;
 
-// http://stackoverflow.com/questions/14545961/modify-qt-gui-from-background-worker-thread
 
 class Colors : public QWidget
 {
@@ -21,7 +20,6 @@ class Colors : public QWidget
 
     public slots:
         void set_maze(TMaze maze);
-        void on_update_map(int i, int j);
 
     private:
         Map* map_;

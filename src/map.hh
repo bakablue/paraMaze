@@ -3,13 +3,11 @@
 
 # include <map>
 # include <istream>
-# include <QThread>
 
 # include "cell.hh"
 
-class Map : public QThread
+class Map
 {
-    Q_OBJECT
     public:
         Map();
         Map(int width, int height);
@@ -60,11 +58,6 @@ class Map : public QThread
         void algo_solve_path(Cell* current);
 
         Map* operator=(Map *map);
-
-        void run();
-
-    signals:
-        void update_map(int i, int j);
     private:
         std::map<int, Cell*> *map_;
         int width_;
