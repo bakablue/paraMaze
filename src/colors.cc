@@ -1,5 +1,6 @@
 #include "colors.hh"
 #include <QPainter>
+#include <unistd.h>
 
 Colors::Colors(QWidget *parent, Map* map)
     : QWidget(parent)
@@ -126,4 +127,10 @@ void Colors::set_maze(std::vector<std::vector<Cell*> >  maze)
 void Colors::set_isMaze(bool v)
 {
     isMaze_ = v;
+}
+
+void Colors::update_gui()
+{
+    update();
+    map_->display();
 }
