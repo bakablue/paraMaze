@@ -2,10 +2,10 @@
 # define ALGO_PATH_HH
 
 # include "map.hh"
+# include <QThread>
 
 class AlgoPath : public QThread
 {
-    Q_OBJECT
     public:
         AlgoPath();
         ~AlgoPath();
@@ -51,8 +51,9 @@ class AlgoPath : public QThread
     protected:
         void run();
 
-    signals:
-        void update_map(int i, int j);
+        Q_OBJECT
+            signals:
+            void update_gui();
 
     private:
         Map *map_;

@@ -3,18 +3,9 @@
 #include "algo_path.hh"
 #include <thread>
 
-void init_gui(int argc, char* argv[], Map *map)
-{
-    QApplication app(argc, argv);
-
-    Colors window;
-    window.set_map(map);
-    window.resize(250, 150);
-    window.setWindowTitle("yolo");
-    window.show();
-
-    app.exec();
-}
+//void init_gui(int argc, char* argv[], Map *map)
+//{
+//}
 
 int main(int argc, char *argv[])
 {
@@ -32,13 +23,25 @@ int main(int argc, char *argv[])
             {
                 Parser p = Parser(argv[i]);
                 p.parse();
-                std::thread gui(init_gui, argc, argv, p.get_map());
-                AlgoPath algo;
-                algo.set_map(p.get_map());
-                algo.set_option(1);
-                algo.start();
+//                std::thread gui(init_gui, argc, argv, p.get_map());
+                AlgoPath *algo = new AlgoPath();
+                algo->set_map(p.get_map());
+                algo->set_option(1);
                 // wait for thread
-                gui.join();
+                QApplication app(argc, argv);
+
+                Colors *window = new Colors();
+                window->set_map(p.get_map());
+                window->resize(250, 150);
+                window->setWindowTitle("ParaMaze");
+
+                QObject::connect(algo, SIGNAL(update_gui()), window, SLOT(update_gui()), Qt::QueuedConnection);
+                window->show();
+                algo->start();
+                app.exec();
+                algo->wait();
+                algo->quit();
+                //            gui.join();
 
             }
         }

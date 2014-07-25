@@ -188,7 +188,7 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
     if (next_cell.size() == 1)
     {
         map_->set_cell(w, h, WALL);
-        emit update_map(w, h);
+        emit update_gui();
         standard_solve_perfect_maze_rec(next_cell[0]->get_x(),
                                         next_cell[0]->get_y());
     }
@@ -198,14 +198,10 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
 void AlgoPath::run()
 {
     map_->display();
-    std::cout << "run" << std::endl;
 
     if (option_ == 1)
         standard_solve_any_maze();
     else
         standard_solve_perfect_maze();
-    //while (1)
-    //{
-    //    emit update_map(1, 1);
-    //}
+
 }
