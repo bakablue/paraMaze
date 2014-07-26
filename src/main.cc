@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 //                std::thread gui(init_gui, argc, argv, p.get_map());
                 AlgoPath *algo = new AlgoPath();
                 algo->set_map(p.get_map());
-                algo->set_option(1);
+                algo->set_option(2);
                 // wait for thread
                 QApplication app(argc, argv);
 

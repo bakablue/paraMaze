@@ -75,7 +75,7 @@ void AlgoPath::standard_solve_perfect_maze()
     {
         for (w = 0; w < map_->get_width(); ++w)
         {
-            c = map_->get_cell(h, w);
+            c = map_->get_cell(w, h);
             if ((c->get_type() != WALL && c->get_type() != END
                  && c->get_type() != START))
             {
@@ -133,6 +133,8 @@ void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
     {
         current->set_pointed(cpointed);
         current->set_type(FLOW);
+        emit update_gui();
+        usleep(50000);
 
         for (i = 0; i < 4; ++i)
         {
@@ -180,7 +182,9 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
             if (map_->has_cell(wtemp, htemp))
             {
                 if (map_->get_cell(wtemp, htemp)->get_type() == FREE)
+                {
                     next_cell.push_back(map_->get_cell(wtemp, htemp));
+                }
             }
 
     }
@@ -189,7 +193,7 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
     // beside it
     if (next_cell.size() == 1)
     {
-        map_->set_cell(w, h, WALL);
+        map_->get_cell(w, h)->set_type(WALL);
         emit update_gui();
         usleep(50000);
         standard_solve_perfect_maze_rec(next_cell[0]->get_x(),
