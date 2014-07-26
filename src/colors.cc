@@ -132,6 +132,4 @@ void Colors::set_isMaze(bool v)
 void Colors::update_gui()
 {
     update();
-    std::cout << "plaint flow" << std::endl;
-    map_->display();
 }

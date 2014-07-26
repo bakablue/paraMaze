@@ -48,6 +48,7 @@ class AlgoPath : public QThread
         void set_map(Map* map);
 
         void set_option(int option);
+        void set_parallel(int parallel);
 
     protected:
         void run();
@@ -60,6 +61,7 @@ signals:
         Map *map_;
         static std::vector<std::vector<int> > adjacents;
         int option_;
+        int parallel_;
 };
 
 #endif /* !ALGO_PATH */

@@ -2,6 +2,7 @@
 #include "mazegenerator.hh"
 #include "algo_path.hh"
 #include <thread>
+#include <tbb/pipeline.h>
 
 //void init_gui(int argc, char* argv[], Map *map)
 //{
@@ -9,9 +10,12 @@
 
 int main(int argc, char *argv[])
 {
+    int parallel = 0;
+    int start = 2;
+
     if (argc == 1)
     {
-        std::cout << "Usage : ./maze --solve test.txt [...]" << std::endl;
+        std::cout << "Usage : ./maze --solve [-p] test.txt [...]" << std::endl;
         std::cout << "        ./maze --generate hauteur largeur" << std::endl;
         return 1;
     }
@@ -19,14 +23,20 @@ int main(int argc, char *argv[])
     {
         if (argv[1] == std::string("--solve"))
         {
-            for (int i = 2; i < argc; i++)
+            if (argv[2] == std::string("-p"))
+            {
+                parallel = 1;
+                start = 3;
+            }
+            for (int i = start; i < argc; i++)
             {
                 Parser p = Parser(argv[i]);
                 p.parse();
 //                std::thread gui(init_gui, argc, argv, p.get_map());
                 AlgoPath *algo = new AlgoPath();
                 algo->set_map(p.get_map());
-                algo->set_option(2);
+                algo->set_option(1);
+                algo->set_parallel(parallel);
                 // wait for thread
                 QApplication app(argc, argv);
 

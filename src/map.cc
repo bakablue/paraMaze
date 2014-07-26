@@ -6,7 +6,7 @@ Map::Map()
     , istart_(0)
     , jstart_(0)
 {
-    map_ = new std::map<int, Cell*>();
+    map_ = new tbb::concurrent_unordered_map<int, Cell*>();
 }
 
 Map::Map(int width, int height)
@@ -15,7 +15,7 @@ Map::Map(int width, int height)
   , istart_(0)
   , jstart_(0)
 {
-  map_ = new std::map<int, Cell*>();
+  map_ = new tbb::concurrent_unordered_map<int, Cell*>();
 }
 
 Map::~Map()
@@ -29,7 +29,7 @@ Map::Map(const Map* m)
     height_ = m->get_height();
 }
 
-std::map<int, Cell*>* Map::get_map() const
+tbb::concurrent_unordered_map<int, Cell*>* Map::get_map() const
 {
   return map_;
 }

@@ -5,6 +5,7 @@ std::vector<std::vector<int> > AlgoPath::adjacents;
 AlgoPath::AlgoPath()
     : QThread()
     , option_(0)
+    , parallel_(0)
 {
     adjacents.push_back({ 1, 0 });
     adjacents.push_back({ -1, 0 });
@@ -29,6 +30,11 @@ void AlgoPath::set_map(Map* map)
 void AlgoPath::set_option(int option)
 {
     option_ = option;
+}
+
+void AlgoPath::set_parallel(int parallel)
+{
+    parallel_ = parallel;
 }
 
 void AlgoPath::standard_solve_any_maze()
@@ -58,8 +64,23 @@ void AlgoPath::standard_solve_any_maze()
         }
     }
 
-    for (auto c : init_cells)
-        algo_flow(c, cstart);
+    // parallel version
+    if (parallel_)
+    {
+        tbb::parallel_for(tbb::blocked_range<std::vector<Cell*>::iterator>(init_cells.begin(), init_cells.end()),
+                          // Lambda that works on a vector of cells
+                          [&](const tbb::blocked_range<std::vector<Cell*>::iterator> l_cells)
+                              {
+                                for (std::vector<Cell*>::iterator it = l_cells.begin();
+                                     it != l_cells.end(); ++it)
+                                algo_flow(*it, cstart);
+                              }
+                             );
+    }
+    // sequential version
+    else
+        for (auto c : init_cells)
+            algo_flow(c, cstart);
 }
 
 void AlgoPath::standard_solve_perfect_maze()
@@ -154,6 +175,21 @@ void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
         }
 
         // Launch the algorithm on every free cell beside the current one
+    // parallel version
+    if (parallel_)
+    {
+        tbb::parallel_for(tbb::blocked_range<std::vector<Cell*>::iterator>(next_cells.begin(), next_cells.end()),
+                          // Lambda that works on a vector of cells
+                          [&](const tbb::blocked_range<std::vector<Cell*>::iterator> l_cells)
+                              {
+                                for (std::vector<Cell*>::iterator it = l_cells.begin();
+                                     it != l_cells.end(); ++it)
+                                algo_flow(*it, current);
+                              }
+                             );
+    }
+    // sequential version
+    else
         for (auto c : next_cells)
             algo_flow(c, current);
     }
@@ -209,4 +245,5 @@ void AlgoPath::run()
         standard_solve_any_maze();
     else
         standard_solve_perfect_maze();
+
 }
