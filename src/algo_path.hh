@@ -28,6 +28,8 @@ class AlgoPath : public QThread
          *  \fn standard_solve_any_maze
          *  \brief Resolve any maze (not parallelized)
          */
+
+        void get_isolated_cells(std::vector<Cell*> &init_cells, int w, int h);
         void standard_solve_any_maze();
         /**
          * \fn algo_flow
@@ -51,11 +53,18 @@ class AlgoPath : public QThread
         void set_parallel(int parallel);
 
     protected:
+        /**
+         * \fn run
+         * \brief Run the algorithms
+         */
         void run();
 
 signals:
+        /**
+         * \fn updage_gui
+         * \brief Signal to update the gui
+         */
         void update_gui();
-        void update_map(int i, int j);
 
     private:
         Map *map_;
