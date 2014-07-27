@@ -35,10 +35,13 @@ public:
   e_type_cell get_type() const;
   int get_x() const;
   int get_y() const;
+  std::vector<bool>* get_walls();
+  bool get_isInMaze();
   Cell* get_pointed() const;
   void set_pointed(Cell* p);
   void set_isInMaze(bool b);
-  bool get_isInMaze();
+  void set_walls(std::vector<bool>* w);
+  
 
   std::ostream& debug(std::ostream& os);
 
@@ -51,6 +54,8 @@ private:
   bool isInMaze_;
   e_type_cell type_;
   Cell* pointed_;
+  // (0,N) (1,E) (2,S) (3,W)
+  std::vector<bool>* walls_;
 };
 
 

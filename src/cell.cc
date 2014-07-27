@@ -34,15 +34,8 @@ Cell::Cell(const Cell* c)
   x_ = c->get_x();
   y_ = c->get_y();
   pointed_ = c->get_pointed();
+  isInMaze_ = c->isInMaze_;
 }
-
-//Cell* Cell::operator=(const Cell* c)
-//{
-//    type_ = c->get_type();
-//    x_ = c->get_x();
-//    y_ = c->get_y();
-//    return this;
-//}
 
 void Cell::set_type(e_type_cell type)
 {
@@ -64,24 +57,41 @@ int Cell::get_y() const
   return y_;
 }
 
-
 std::ostream& Cell::debug(std::ostream& os)
 {
   if (this == nullptr)
     os << "NULL";
   else if (get_type() == WALL)
-    os << "Cell("<< get_x() << ", " << get_y() << ", W)";
+  {
+    os << "Cell("<< get_x() << ", " << get_y() << ", W) ";
+    for (bool b : *walls_)
+    {
+      os << b << ", ";
+    }
+  }
   else if (get_type() == PATH)
     os << "Cell("<< get_x() << ", " << get_y() << ", P)";
   else if (get_type() == FREE)
-    os << "Cell("<< get_x() << ", " << get_y() << ", F)";
+    {
+      os << "Cell("<< get_x() << ", " << get_y() << ", F)";
+      for (bool b : *walls_)
+      {
+        os << b << ", ";
+      }
+    }
   else if (get_type() == START)
-    os << "Cell("<< get_x() << ", " << get_y() << ", S)";
+    {
+      os << "Cell("<< get_x() << ", " << get_y() << ", S)";
+      for (bool b : *walls_)
+      {
+        os << b << ", ";
+      }
+    }
   else if (get_type() == END)
     os << "Cell("<< get_x() << ", " << get_y() << ", E)";
   else if (get_type() == FLOW)
     os << "Cell("<< get_x() << ", " << get_y() << ", ^)";
-
+  os << std::endl;
   return os;
 }
 
@@ -117,6 +127,16 @@ void Cell::set_pointed(Cell* p)
 void Cell::set_isInMaze(bool b)
 {
   isInMaze_ = b;
+}
+
+std::vector<bool>* Cell::get_walls()
+{
+  return walls_;
+}
+
+void Cell::set_walls(std::vector<bool> *w)
+{
+  walls_ = w;
 }
 
 bool Cell::get_isInMaze()

@@ -22,20 +22,26 @@ class MazeGenerator : public QThread
 signals:
   void sendMaze(TMaze maze);
 public:
-  // MazeGenerator(MazeGenerator &mg);
-  MazeGenerator(int h, int w);
+  MazeGenerator(int h, int w, bool perfect);
   ~MazeGenerator();
-  void Print();
+  void Print(bool p = true);
   void Generate();
+  void Generate2();
 
 private:
   void run();
+  std::vector<Cell*> getNotVisited();
+  TMaze getFullMaze();
   std::vector<Cell*> getWalls(Cell* curr);
+  std::vector<Cell*> getNeigh(Cell* curr);
   Cell* getOpposite (Cell* c, Cell* w);
+  void RemoveWall(Cell* c1, Cell* c2);
+  int getRandom(int max);
 
 public:
   int h_;
   int w_;
+  bool perfect_;
   TMaze maze_;
 };
 
