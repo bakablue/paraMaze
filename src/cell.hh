@@ -1,6 +1,15 @@
 #ifndef CELL_HH
 # define CELL_HH
 
+# define WHITE  "\033[22;30m"
+# define GREEN  "\033[22;31m"
+# define RED  "\033[22;32m"
+# define BLUE  "\033[22;33m"
+# define PURPLE  "\033[22;34m"
+# define YELLOW  "\033[22;35m"
+# define BROWN  "\033[22;35m"
+# define RESETCOLOR "\033[0m"
+
 # include <iostream>
 # include <vector>
 
@@ -34,7 +43,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, const Cell& obj);
 
-        
+
 private:
   int x_;
   int y_;

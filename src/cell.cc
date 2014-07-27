@@ -74,17 +74,17 @@ std::ostream& Cell::debug(std::ostream& os)
 std::ostream& operator<<(std::ostream& os, const Cell& obj)
 {
   if (obj.get_type() == WALL)
-    os << "W";
+    os << RED << "W" << RESETCOLOR;
   else if (obj.get_type() == PATH)
-    os << "P";
+    os << BLUE << "P" << RESETCOLOR;
   else if (obj.get_type() == FREE)
-    os << "F";
+    os << GREEN << "F" << RESETCOLOR;
   else if (obj.get_type() == START)
-    os << "S";
+    os << YELLOW << "S" << RESETCOLOR;
   else if (obj.get_type() == END)
-    os << "E";
+    os << PURPLE << "E" << RESETCOLOR;
   else if (obj.get_type() == FLOW)
-    os << "^";
+    os << BROWN << "R" << RESETCOLOR;
 
   return os;
 }
@@ -104,7 +104,7 @@ void Cell::set_isInMaze(bool b)
 {
   isInMaze_ = b;
 }
-        
+
 bool Cell::get_isInMaze()
 {
   return isInMaze_;

@@ -11,11 +11,12 @@
 int main(int argc, char *argv[])
 {
     int parallel = 0;
+    int gui = 0;
     int start = 2;
 
     if (argc == 1)
     {
-        std::cout << "Usage : ./maze --solve [-p] test.txt [...]" << std::endl;
+        std::cout << "Usage : ./maze --solve [--gui] [-p] test.txt [...]" << std::endl;
         std::cout << "        ./maze --generate hauteur largeur" << std::endl;
         return 1;
     }
@@ -23,32 +24,44 @@ int main(int argc, char *argv[])
     {
         if (argv[1] == std::string("--solve"))
         {
-            if (argv[2] == std::string("-p"))
+            if (argv[2] == std::string("--gui"))
             {
+                gui = 1;
+                start++;
+            }
+            if (argv[2] == std::string("-p") || (argc > 3 && argv[3] == std::string("-p")))
+            {
+                std::cout << "why" << std::endl;
                 parallel = 1;
-                start = 3;
+                start++;
             }
             for (int i = start; i < argc; i++)
             {
                 Parser p = Parser(argv[i]);
                 p.parse();
-//                std::thread gui(init_gui, argc, argv, p.get_map());
+
                 AlgoPath *algo = new AlgoPath();
                 algo->set_map(p.get_map());
                 algo->set_option(1);
+                std::cout << "parallel " << parallel << std::endl;
                 algo->set_parallel(parallel);
-                // wait for thread
-                QApplication app(argc, argv);
+                algo->set_gui(gui);
 
+                QApplication app(argc, argv);
                 Colors *window = new Colors();
                 window->set_map(p.get_map());
                 window->resize(250, 150);
                 window->setWindowTitle("ParaMaze");
 
                 QObject::connect(algo, SIGNAL(update_gui()), window, SLOT(update_gui()), Qt::QueuedConnection);
+
                 algo->start();
-                window->show();
-                app.exec();
+
+                if (gui)
+                {
+                    window->show();
+                    app.exec();
+                }
                 algo->wait();
                 algo->quit();
             }
@@ -78,5 +91,5 @@ int main(int argc, char *argv[])
         }
     }
 
-  return 0;
+    return 0;
 }

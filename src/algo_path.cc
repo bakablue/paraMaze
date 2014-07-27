@@ -7,6 +7,7 @@ AlgoPath::AlgoPath()
     : QThread()
     , option_(0)
     , parallel_(0)
+    , gui_(0)
 {
     adjacents.push_back({ 1, 0 });
     adjacents.push_back({ -1, 0 });
@@ -36,6 +37,11 @@ void AlgoPath::set_option(int option)
 void AlgoPath::set_parallel(int parallel)
 {
     parallel_ = parallel;
+}
+
+void AlgoPath::set_gui(int gui)
+{
+    gui_ = gui;
 }
 
 void AlgoPath::standard_solve_any_maze()
@@ -71,12 +77,12 @@ void AlgoPath::standard_solve_any_maze()
         tbb::parallel_for(tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator>(init_cells.begin(), init_cells.end()),
                           // Lambda that works on a vector of cells
                           [&](const tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator> l_cells)
-                              {
-                                for (tbb::concurrent_vector<Cell*>::iterator it = l_cells.begin();
-                                     it != l_cells.end(); ++it)
-                                algo_flow(*it, cstart);
-                              }
-                             );
+                          {
+                          for (tbb::concurrent_vector<Cell*>::iterator it = l_cells.begin();
+                               it != l_cells.end(); ++it)
+                          algo_flow(*it, cstart);
+                          }
+                         );
     }
     // sequential version
     else
@@ -158,8 +164,11 @@ void AlgoPath::algo_solve_path(Cell* current)
     if (current->get_type() != START)
         algo_solve_path(current->get_pointed());
     current->set_type(PATH);
-    //emit update_gui();
-    //usleep(50000);
+    if (gui_)
+    {
+        emit update_gui();
+        usleep(50000);
+    }
 }
 
 void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
@@ -173,8 +182,11 @@ void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
     {
         current->set_pointed(cpointed);
         current->set_type(FLOW);
-        //emit update_gui();
-        //usleep(50000);
+        if (gui_)
+        {
+            emit update_gui();
+            usleep(50000);
+        }
 
         for (i = 0; i < 4; ++i)
         {
@@ -249,8 +261,11 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
     if (next_cell.size() == 1)
     {
         map_->get_cell(w, h)->set_type(WALL);
-        //emit update_gui();
-        //usleep(50000);
+        if (gui_)
+        {
+            emit update_gui();
+            usleep(50000);
+        }
         standard_solve_perfect_maze_rec(next_cell[0]->get_x(),
                                         next_cell[0]->get_y());
     }

@@ -51,6 +51,7 @@ class AlgoPath : public QThread
 
         void set_option(int option);
         void set_parallel(int parallel);
+        void set_gui(int gui);
 
     protected:
         /**
@@ -71,6 +72,7 @@ signals:
         static std::vector<std::vector<int> > adjacents;
         int option_;
         int parallel_;
+        int gui_;
 };
 
 #endif /* !ALGO_PATH */
