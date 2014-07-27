@@ -1,7 +1,7 @@
 #include "algo_path.hh"
 #include <tbb/tick_count.h>
 
-std::vector<std::vector<int> > AlgoPath::adjacents;
+tbb::concurrent_vector<tbb::concurrent_vector<int> > AlgoPath::adjacents;
 
 AlgoPath::AlgoPath()
     : QThread()
@@ -46,51 +46,11 @@ void AlgoPath::set_gui(int gui)
 
 void AlgoPath::standard_solve_any_maze()
 {
-    int i = 0;
-    int wtemp, htemp = 0;
-    tbb::concurrent_vector<Cell*> init_cells;
-
-    // We start from the start case
-    Cell* cstart = map_->get_start_cell();
-    Cell* ctemp;
-
-    for (i = 0; i < 4; ++i)
-    {
-        wtemp = cstart->get_x() + adjacents[i][0];
-        htemp = cstart->get_y() + adjacents[i][1];
-
-        if (wtemp >= 0 && wtemp < map_->get_width() && htemp >= 0 && htemp < map_->get_height())
-        {
-            if (map_->has_cell(wtemp, htemp))
-            {
-                ctemp = map_->get_cell(wtemp, htemp);
-                if (ctemp->get_type() == FREE)
-                    init_cells.push_back(ctemp);
-
-            }
-        }
-    }
-
-    // parallel version
-    if (parallel_)
-    {
-        tbb::parallel_for(tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator>(init_cells.begin(), init_cells.end()),
-                          // Lambda that works on a vector of cells
-                          [&](const tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator> l_cells)
-                          {
-                          for (tbb::concurrent_vector<Cell*>::iterator it = l_cells.begin();
-                               it != l_cells.end(); ++it)
-                          algo_flow(*it, cstart);
-                          }
-                         );
-    }
-    // sequential version
-    else
-        for (auto c : init_cells)
-            algo_flow(c, cstart);
+    algo_flow();
 }
 
-void AlgoPath::get_isolated_cells(std::vector<Cell*> &init_cells, int w, int h)
+void AlgoPath::get_isolated_cells(tbb::concurrent_vector<Cell*> &init_cells,
+                                  int w, int h)
 {
     int htemp, wtemp = 0;
     int count = 0;
@@ -106,7 +66,8 @@ void AlgoPath::get_isolated_cells(std::vector<Cell*> &init_cells, int w, int h)
             wtemp = w + adjacents[i][0];
             htemp = h + adjacents[i][1];
 
-            if (wtemp >= 0 && wtemp < map_->get_width() && htemp >= 0 && htemp < map_->get_height())
+            if (wtemp >= 0 && wtemp < map_->get_width()
+                && htemp >= 0 && htemp < map_->get_height())
             {
                 if (map_->has_cell(wtemp, htemp))
                 {
@@ -128,35 +89,51 @@ void AlgoPath::get_isolated_cells(std::vector<Cell*> &init_cells, int w, int h)
 void AlgoPath::standard_solve_perfect_maze()
 {
     int h, w = 0;
-    std::vector<Cell*> init_cells;
+    tbb::concurrent_vector<Cell*> init_cells;
+
+    //if (parallel_)
+    //{
+    //    tbb::parallel_for(tbb::blocked_range
+    //                      <tbb::concurrent_unordered_map<int, Cell*>::iterator>
+    //                      (map_->get_map()->begin(), map_->get_map()->end()),
+    //                      // Lambda that works on a map of cells
+    //                      [&]
+    //                      (const tbb::blocked_range
+    //                       <tbb::concurrent_unordered_map<int, Cell*>::iterator> mymap)
+    //                      {
+    //                      }
+    //                     );
+    //}
+    //else
+    for (h = 0; h < map_->get_height(); ++h)
+    {
+        for (w = 0; w < map_->get_width(); ++w)
+        {
+            get_isolated_cells(init_cells, w, h);
+        }
+    }
 
     if (parallel_)
     {
-        //tbb::parallel_for(tbb::blocked_range<std::map<int, Cell*>::iterator>(map_->get_map()->begin(), map_->get_map()->end()),
-        //                  // Lambda that works on a vector of cells
-        //                  [&](const tbb::blocked_range<std::map<int, Cell*>::iterator> l_cells)
-        //                  {
-        //                  for (std::map<int, Cell*>::iterator it = l_cells.begin();
-        //                       it != l_cells.end(); ++it)
-        //                  std::cout << "yolo" << std::endl;
-        //                  }
-        //                 );
+        tbb::parallel_for(tbb::blocked_range
+                          <tbb::concurrent_vector<Cell*>::iterator>
+                          (init_cells.begin(),
+                           init_cells.end()),
+                          // Lambda that works on a vector of cells
+                          [&](const tbb::blocked_range
+                              <tbb::concurrent_vector<Cell*>::iterator> l_cells)
+                          {
+                          for (tbb::concurrent_vector<Cell*>::iterator it =
+                               l_cells.begin();
+                               it != l_cells.end(); ++it)
+                          standard_solve_perfect_maze_rec((*it)->get_x(),
+                                                          (*it)->get_y());
+                          }
+                         );
     }
     else
-        for (h = 0; h < map_->get_height(); ++h)
-        {
-            for (w = 0; w < map_->get_width(); ++w)
-            {
-                get_isolated_cells(init_cells, w, h);
-            }
-        }
-
-    std::cout << "=== Print cells ===" << std::endl;
-    for (auto cell : init_cells)
-    {
-        std::cout << cell->get_x() << " " << cell->get_y() << std::endl;
-        standard_solve_perfect_maze_rec(cell->get_x(), cell->get_y());
-    }
+        for (auto cell : init_cells)
+            standard_solve_perfect_maze_rec(cell->get_x(), cell->get_y());
 }
 
 void AlgoPath::algo_solve_path(Cell* current)
@@ -171,70 +148,86 @@ void AlgoPath::algo_solve_path(Cell* current)
     }
 }
 
-void AlgoPath::algo_flow(Cell* current, Cell* cpointed)
+void AlgoPath::algo_flow_cell(Cell* current, Map* map)
 {
+    int wtemp = 0;
+    int htemp = 0;
     int i = 0;
-    int wtemp, htemp = 0;
-    tbb::concurrent_vector<Cell*> next_cells;
-    Cell* ctemp;
+    Cell *current_to_set = map->get_cell(current->get_x(), current->get_y());
 
-    if (current->get_type() == FREE)
+    if (current->get_type() == FREE || current->get_type() == END)
     {
-        current->set_pointed(cpointed);
-        current->set_type(FLOW);
-        if (gui_)
-        {
-            emit update_gui();
-            usleep(50000);
-        }
-
         for (i = 0; i < 4; ++i)
         {
             wtemp = current->get_x() + adjacents[i][0];
             htemp = current->get_y() + adjacents[i][1];
 
-            if (wtemp >= 0 && wtemp < map_->get_width() && htemp >= 0 && htemp < map_->get_height())
-            {
-                if (map_->has_cell(wtemp, htemp))
+            if (wtemp >= 0 && wtemp < map_->get_width() &&
+                htemp >= 0 && htemp < map_->get_height())
+                if (map_->get_cell(wtemp, htemp)->get_type() == FLOW ||
+                    map_->get_cell(wtemp, htemp)->get_type() == START)
                 {
-                    ctemp = map_->get_cell(wtemp, htemp);
-                    if (ctemp->get_type() == FREE || ctemp->get_type() == END)
-                        next_cells.push_back(ctemp);
-
+                    current_to_set->set_pointed(map->get_cell(wtemp, htemp));
+                    break;
                 }
-            }
-        }
 
-        // Launch the algorithm on every free cell beside the current one
-        // parallel version
-        if (parallel_)
-        {
-            tbb::parallel_for(tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator>(next_cells.begin(), next_cells.end()),
-                              // Lambda that works on a vector of cells
-                              [&](const tbb::blocked_range<tbb::concurrent_vector<Cell*>::iterator> l_cells)
-                              {
-                              for (tbb::concurrent_vector<Cell*>::iterator it = l_cells.begin();
-                                   it != l_cells.end(); ++it)
-                              algo_flow(*it, current);
-                              }
-                             );
         }
-        // sequential version
-        else
-            for (auto c : next_cells)
-                algo_flow(c, current);
     }
-    if (current->get_type() == END && cpointed->get_type() == FLOW)
+    if (current->get_type() == PATH && current_to_set->get_pointed())
+        current_to_set->get_pointed()->set_type(PATH);
+    if (current->get_type() == FREE && current_to_set->get_pointed())
+        current_to_set->set_type(FLOW);
+    if (current->get_type() == END && current->get_pointed())
+        current_to_set->set_type(PATH);
+
+}
+
+void AlgoPath::algo_flow2(Map *map)
+{
+    int h = 0;
+    int w = 0;
+
+    if (parallel_)
     {
-        current->set_type(PATH);
-        // Begin printing the path of the maze
-        algo_solve_path(cpointed);
+        tbb::parallel_for(tbb::blocked_range<size_t>(0, map->get_width() * map->get_height()),
+                          // Lambda that works on a vector of cells
+                          [&](const tbb::blocked_range<size_t> r)
+                          {
+                          for (size_t i = r.begin(); i != r.end(); ++i)
+                          algo_flow_cell((*(map_->get_map()))[i], map);
+                          }
+                         );
     }
+    else
+        for (h = 0; h < map_->get_height(); ++h)
+            for (w = 0; w < map_->get_width(); ++w)
+                algo_flow_cell(map_->get_cell(w, h),
+                               map);
+
+    map_->update_map(map);
+
+    if (gui_)
+    {
+        emit update_gui();
+        usleep(50000);
+    }
+}
+
+void AlgoPath::algo_flow()//Cell* current, Cell* cpointed)
+{
+    Map *new_map = new Map(map_->get_width(), map_->get_height());
+    for (int j = 0; j < map_->get_height(); ++j)
+        for (int i = 0; i < map_->get_width(); ++i)
+            new_map->get_map()->push_back(new Cell(i, j, map_->get_cell(i, j)->get_type()));
+    new_map->display();
+    while (map_->get_start_cell()->get_type() != PATH)
+        algo_flow2(new_map);
 }
 
 void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
 {
-    int htemp, wtemp = 0;
+    int htemp = 0;
+    int wtemp = 0;
     int i = 0;
     tbb::concurrent_vector<Cell*> next_cell;
 
@@ -244,7 +237,8 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
         wtemp = w + adjacents[i][0];
         htemp = h + adjacents[i][1];
 
-        if (wtemp >= 0 && htemp >= 0 && htemp < map_->get_height() && wtemp < map_->get_width())
+        if (wtemp >= 0 && htemp >= 0 && htemp < map_->get_height()
+            && wtemp < map_->get_width())
             // if it exists
             if (map_->has_cell(wtemp, htemp))
             {
@@ -264,7 +258,7 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
         if (gui_)
         {
             emit update_gui();
-            usleep(50000);
+        usleep(50000);
         }
         standard_solve_perfect_maze_rec(next_cell[0]->get_x(),
                                         next_cell[0]->get_y());

@@ -12,11 +12,12 @@ int main(int argc, char *argv[])
 {
     int parallel = 0;
     int gui = 0;
-    int start = 2;
+    int start = 3;
+    int algo_choice = 1;
 
     if (argc == 1)
     {
-        std::cout << "Usage : ./maze --solve [--gui] [-p] test.txt [...]" << std::endl;
+        std::cout << "Usage : ./maze --solve [1|2] [--gui] [-p] test.txt [...]" << std::endl;
         std::cout << "        ./maze --generate hauteur largeur" << std::endl;
         return 1;
     }
@@ -24,12 +25,15 @@ int main(int argc, char *argv[])
     {
         if (argv[1] == std::string("--solve"))
         {
-            if (argv[2] == std::string("--gui"))
+            std::istringstream buffer(argv[2]);
+            buffer >> algo_choice;
+            if (argv[3] == std::string("--gui"))
             {
                 gui = 1;
                 start++;
             }
-            if (argv[2] == std::string("-p") || (argc > 3 && argv[3] == std::string("-p")))
+            if ((argc > 3 && argv[3] == std::string("-p")) ||
+                (argc > 4 && argv[4] == std::string("-p")))
             {
                 parallel = 1;
                 start++;
@@ -41,7 +45,7 @@ int main(int argc, char *argv[])
 
                 AlgoPath *algo = new AlgoPath();
                 algo->set_map(p.get_map());
-                algo->set_option(1);
+                algo->set_option(algo_choice);
                 algo->set_parallel(parallel);
                 algo->set_gui(gui);
 

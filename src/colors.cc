@@ -83,7 +83,7 @@ void Colors::paintEvent(QPaintEvent *e)
         {
             for (j = 0; j < map_->get_height(); j++)
             {
-                current = map_->get_map()->find(j * map_->get_width() + i)->second;
+                current = map_->get_map()->at(j * map_->get_width() + i);
                 t = current->get_type();
                 if (t == WALL)
                     painter.setBrush(QBrush("#c56c00"));

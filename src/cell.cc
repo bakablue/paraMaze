@@ -3,6 +3,8 @@
 Cell::Cell()
   : x_(0)
   , y_(0)
+  , type_(FREE)
+  , pointed_(NULL)
 {
 }
 
@@ -10,6 +12,18 @@ Cell::Cell(int x, int y)
   : x_(x)
   , y_(y)
   , isInMaze_(false)
+  , type_(FREE)
+  , pointed_(NULL)
+{
+
+}
+
+Cell::Cell(int x, int y, e_type_cell t)
+  : x_(x)
+  , y_(y)
+  , isInMaze_(false)
+  , type_(t)
+  , pointed_(NULL)
 {
 
 }

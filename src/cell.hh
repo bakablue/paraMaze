@@ -7,7 +7,7 @@
 # define BLUE  "\033[22;33m"
 # define PURPLE  "\033[22;34m"
 # define YELLOW  "\033[22;35m"
-# define BROWN  "\033[22;35m"
+# define BROWN  "\033[22;29m"
 # define RESETCOLOR "\033[0m"
 
 # include <iostream>
@@ -28,6 +28,7 @@ class Cell
 public:
   Cell();
   Cell(int x, int y);
+  Cell(int x, int y, e_type_cell t);
   Cell(const Cell* c);
 
   void set_type(e_type_cell type);

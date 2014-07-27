@@ -29,7 +29,7 @@ class AlgoPath : public QThread
          *  \brief Resolve any maze (not parallelized)
          */
 
-        void get_isolated_cells(std::vector<Cell*> &init_cells, int w, int h);
+        void get_isolated_cells(tbb::concurrent_vector<Cell*> &init_cells, int w, int h);
         void standard_solve_any_maze();
         /**
          * \fn algo_flow
@@ -38,7 +38,9 @@ class AlgoPath : public QThread
          * \param current Current cell used by the algorithm
          * \param cpointed Cell that will be pointed by the current cell
          */
-        void algo_flow(Cell* current, Cell* cpointed);
+        void algo_flow();//Cell* current, Cell* cpointed);
+        void algo_flow2(Map *map);
+        void algo_flow_cell(Cell *current, Map* map);
         /**
          * \fn algo_solve_path
          * \brief Recursive function to print the path.
@@ -69,7 +71,7 @@ signals:
 
     private:
         Map *map_;
-        static std::vector<std::vector<int> > adjacents;
+        static tbb::concurrent_vector<tbb::concurrent_vector<int> > adjacents;
         int option_;
         int parallel_;
         int gui_;
