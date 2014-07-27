@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
             }
             if (argv[2] == std::string("-p") || (argc > 3 && argv[3] == std::string("-p")))
             {
-                std::cout << "why" << std::endl;
                 parallel = 1;
                 start++;
             }
@@ -43,20 +42,16 @@ int main(int argc, char *argv[])
                 AlgoPath *algo = new AlgoPath();
                 algo->set_map(p.get_map());
                 algo->set_option(1);
-                std::cout << "parallel " << parallel << std::endl;
                 algo->set_parallel(parallel);
                 algo->set_gui(gui);
 
                 QApplication app(argc, argv);
                 Colors *window = new Colors();
                 window->set_map(p.get_map());
-                window->resize(250, 150);
-                window->setWindowTitle("ParaMaze");
 
                 QObject::connect(algo, SIGNAL(update_gui()), window, SLOT(update_gui()), Qt::QueuedConnection);
 
                 algo->start();
-
                 if (gui)
                 {
                     window->show();

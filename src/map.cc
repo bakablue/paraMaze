@@ -5,6 +5,7 @@ Map::Map()
     , height_(0)
     , istart_(0)
     , jstart_(0)
+    , end_cell_(false)
 {
     map_ = new tbb::concurrent_unordered_map<int, Cell*>();
 }
@@ -14,6 +15,7 @@ Map::Map(int width, int height)
   , height_(height)
   , istart_(0)
   , jstart_(0)
+  , end_cell_(false)
 {
   map_ = new tbb::concurrent_unordered_map<int, Cell*>();
 }
@@ -54,7 +56,10 @@ void Map::set_cell(int x, int y, char type)
   else if (type == 's')
     c->set_type(START);
   else if (type == 'e')
+  {
     c->set_type(END);
+    end_cell_ = true;
+  }
   else if (type == 'p')
     c->set_type(PATH);
 
@@ -100,3 +105,12 @@ void Map::set_start_cell(int istart, int jstart)
   jstart_ = jstart;
 }
 
+bool Map::has_end_cell() const
+{
+    return end_cell_;
+}
+
+void Map::set_end_cell(bool end)
+{
+    end_cell_ = end;
+}

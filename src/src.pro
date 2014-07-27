@@ -8,17 +8,17 @@ DEPENDPATH += .
 INCLUDEPATH += .
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LIBS += -ltbb
+QMAKE_TARGET = paramaze
+TARGET = paramaze
 
 # Input
 HEADERS += algo_path.hh \
-           algo_path_parallel.hh \
            cell.hh \
            colors.hh \
            map.hh \
            mazegenerator.hh \
            parser.hh
 SOURCES += algo_path.cc \
-           algo_path_parallel.cc \
            cell.cc \
            colors.cc \
            main.cc \

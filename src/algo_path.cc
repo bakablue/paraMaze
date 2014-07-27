@@ -274,6 +274,8 @@ void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
 
 void AlgoPath::run()
 {
+    if (gui_ && !map_->has_end_cell())
+        while (!map_->has_end_cell());
     std::cout << "=== Initial map ===" << std::endl;
     map_->display();
     tbb::tick_count t0 = tbb::tick_count::now();

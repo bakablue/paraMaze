@@ -27,6 +27,8 @@ class Map
         int get_height() const;
         void set_start_cell(int istart, int jstart);
         Cell* get_start_cell() const;
+        bool has_end_cell() const;
+        void set_end_cell(bool end);
 
         Map* operator=(Map *map);
 
@@ -36,6 +38,7 @@ class Map
         int height_;
         int istart_;
         int jstart_;
+        bool end_cell_;
 };
 
 
