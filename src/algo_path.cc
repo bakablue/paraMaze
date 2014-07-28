@@ -1,5 +1,6 @@
 #include "algo_path.hh"
 #include <tbb/tick_count.h>
+#include <atomic>
 
 tbb::concurrent_vector<tbb::concurrent_vector<int> > AlgoPath::adjacents;
 
@@ -53,7 +54,8 @@ void AlgoPath::get_isolated_cells(tbb::concurrent_vector<Cell*> &init_cells,
                                   int w, int h)
 {
     int htemp, wtemp = 0;
-    int count = 0;
+    std::atomic<int> count(0);
+
     Cell *c, *ctemp;
 
     c = map_->get_cell(w, h);
@@ -88,52 +90,43 @@ void AlgoPath::get_isolated_cells(tbb::concurrent_vector<Cell*> &init_cells,
 
 void AlgoPath::standard_solve_perfect_maze()
 {
-    int h, w = 0;
-    tbb::concurrent_vector<Cell*> init_cells;
+    perfect_path_ = true;
+    Map *new_map = new Map(map_->get_width(), map_->get_height());
 
-    //if (parallel_)
-    //{
-    //    tbb::parallel_for(tbb::blocked_range
-    //                      <tbb::concurrent_unordered_map<int, Cell*>::iterator>
-    //                      (map_->get_map()->begin(), map_->get_map()->end()),
-    //                      // Lambda that works on a map of cells
-    //                      [&]
-    //                      (const tbb::blocked_range
-    //                       <tbb::concurrent_unordered_map<int, Cell*>::iterator> mymap)
-    //                      {
-    //                      }
-    //                     );
-    //}
-    //else
-    for (h = 0; h < map_->get_height(); ++h)
+    // Initialization of copy
+        for (int j = 0; j < map_->get_height(); ++j)
+            for (int i = 0; i < map_->get_width(); ++i)
+                new_map->get_map()->push_back(new Cell(i, j, map_->get_cell(i, j)->get_type()));
+
+    while (perfect_path_)
     {
-        for (w = 0; w < map_->get_width(); ++w)
+        perfect_path_ = false;
+        if (parallel_)
         {
-            get_isolated_cells(init_cells, w, h);
+            tbb::parallel_for(tbb::blocked_range<size_t>(0, new_map->get_width() * new_map->get_height()),
+                              // Lambda that works on a vector of cells
+                              [&](const tbb::blocked_range<size_t> r)
+                              {
+                              for (size_t i = r.begin(); i != r.end(); ++i)
+                                standard_solve_perfect_maze_rec((*(map_->get_map()))[i], new_map);
+                              }
+                             );
+        }
+        else
+        {
+            for (int j = 0; j < map_->get_height(); ++j)
+                for (int i = 0; i < map_->get_width(); ++i)
+                    count += standard_solve_perfect_maze_rec(map_->get_cell(i, j), new_map);
+        }
+        std::cout << count << std::endl;
+        map_->update_map(new_map);
+        if (gui_)
+        {
+            emit update_gui();
+            usleep(50000);
         }
     }
 
-    if (parallel_)
-    {
-        tbb::parallel_for(tbb::blocked_range
-                          <tbb::concurrent_vector<Cell*>::iterator>
-                          (init_cells.begin(),
-                           init_cells.end()),
-                          // Lambda that works on a vector of cells
-                          [&](const tbb::blocked_range
-                              <tbb::concurrent_vector<Cell*>::iterator> l_cells)
-                          {
-                          for (tbb::concurrent_vector<Cell*>::iterator it =
-                               l_cells.begin();
-                               it != l_cells.end(); ++it)
-                          standard_solve_perfect_maze_rec((*it)->get_x(),
-                                                          (*it)->get_y());
-                          }
-                         );
-    }
-    else
-        for (auto cell : init_cells)
-            standard_solve_perfect_maze_rec(cell->get_x(), cell->get_y());
 }
 
 void AlgoPath::algo_solve_path(Cell* current)
@@ -219,50 +212,47 @@ void AlgoPath::algo_flow()//Cell* current, Cell* cpointed)
     for (int j = 0; j < map_->get_height(); ++j)
         for (int i = 0; i < map_->get_width(); ++i)
             new_map->get_map()->push_back(new Cell(i, j, map_->get_cell(i, j)->get_type()));
-    new_map->display();
+
     while (map_->get_start_cell()->get_type() != PATH)
         algo_flow2(new_map);
 }
 
-void AlgoPath::standard_solve_perfect_maze_rec(int w, int h)
+int AlgoPath::standard_solve_perfect_maze_rec(Cell *current, Map* map)
 {
-    int htemp = 0;
+    int count = 0;
     int wtemp = 0;
+    int htemp = 0;
     int i = 0;
-    tbb::concurrent_vector<Cell*> next_cell;
 
-    // Checks for free cells and add them to the list next_cell
-    for (i = 0; i < 4; ++i)
+    if (current->get_type() == FREE)
     {
-        wtemp = w + adjacents[i][0];
-        htemp = h + adjacents[i][1];
-
-        if (wtemp >= 0 && htemp >= 0 && htemp < map_->get_height()
-            && wtemp < map_->get_width())
-            // if it exists
-            if (map_->has_cell(wtemp, htemp))
-            {
-                if (map_->get_cell(wtemp, htemp)->get_type() == FREE)
-                {
-                    next_cell.push_back(map_->get_cell(wtemp, htemp));
-                }
-            }
-
-    }
-
-    // The cell has 3 walls so we can eliminate it and check the only free cell
-    // beside it
-    if (next_cell.size() == 1)
-    {
-        map_->get_cell(w, h)->set_type(WALL);
-        if (gui_)
+        // Checks for free cells besides the current one
+        for (i = 0; i < 4; ++i)
         {
-            emit update_gui();
-        usleep(50000);
+            wtemp = current->get_x() + adjacents[i][0];
+            htemp = current->get_y() + adjacents[i][1];
+
+            if (wtemp >= 0 && htemp >= 0 && htemp < map_->get_height()
+                && wtemp < map_->get_width())
+                // if it exists
+                if (map_->get_cell(wtemp, htemp)->get_type() == FREE ||
+                    map_->get_cell(wtemp, htemp)->get_type() == START ||
+                    map_->get_cell(wtemp, htemp)->get_type() == END)
+                    count++;
+
         }
-        standard_solve_perfect_maze_rec(next_cell[0]->get_x(),
-                                        next_cell[0]->get_y());
+
+        // The cell has 3 walls so we can eliminate it and check the only free cell
+        // beside it
+        if (count == 1)
+        {
+            map->get_cell(current->get_x(), current->get_y())->set_type(WALL);
+            perfect_path_ = true;
+            return count;
+        }
     }
+
+    return 0;
 
 }
 

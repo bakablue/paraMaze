@@ -23,7 +23,7 @@ class AlgoPath : public QThread
          * \param w width of the current cell
          * \param h height of the current cell
          */
-        void standard_solve_perfect_maze_rec(int w, int h);
+        int standard_solve_perfect_maze_rec(Cell *current, Map* map);
         /**
          *  \fn standard_solve_any_maze
          *  \brief Resolve any maze (not parallelized)
@@ -75,6 +75,7 @@ signals:
         int option_;
         int parallel_;
         int gui_;
+        bool perfect_path_;
 };
 
 #endif /* !ALGO_PATH */
