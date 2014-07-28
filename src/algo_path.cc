@@ -116,9 +116,8 @@ void AlgoPath::standard_solve_perfect_maze()
         {
             for (int j = 0; j < map_->get_height(); ++j)
                 for (int i = 0; i < map_->get_width(); ++i)
-                    count += standard_solve_perfect_maze_rec(map_->get_cell(i, j), new_map);
+                    standard_solve_perfect_maze_rec(map_->get_cell(i, j), new_map);
         }
-        std::cout << count << std::endl;
         map_->update_map(new_map);
         if (gui_)
         {
